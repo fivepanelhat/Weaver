@@ -1,14 +1,10 @@
 
 name: CI Scan
 on:
-  schedule:
-    - cron: "0 */8 * * *"
   push:
     branches: [ main ]
   pull_request:
     types: [ opened, synchronize, reopened ]
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 permissions:
   contents: read
   packages: read
@@ -21,10 +17,6 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -38,6 +30,8 @@ jobs:
             pip install flake8 pytest
           fi
       - name: Run linters
-        run: flake8 . --exclude=.venv,node_modules,build,dist,tests_security_stress
+        run: |
+          flake8 . --exclude=.venv,node_modules,build,dist,tests_security_stress
       - name: Run tests
-        run: pytest
+        run: |
+          pytest
