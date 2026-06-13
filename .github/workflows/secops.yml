@@ -1,10 +1,14 @@
 
 name: SecOps Scan
 on:
+  schedule:
+    - cron: "0 */8 * * *"   # every 8 hours starting at 00:00 UTC
   push:
     branches: [ main ]
   pull_request:
     types: [ opened, synchronize, reopened ]
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 permissions:
   contents: read
 jobs:
@@ -27,7 +31,7 @@ jobs:
         run: pip install bandit
 
       - name: Run Bandit Security Scan
-        # CRITICAL SECOPS CONFIG: We explicitly exclude the stress tests folder. 
+        # CRITICAL SECOPS CONFIG: We explicitly exclude the stress tests folder.
         # Otherwise, our simulated prompt injections and mock JWTs will trip the alarms!
         # -ll means report only Medium and High severity issues.
         run: bandit -r . -ll --exclude ./tests_security_stress/
