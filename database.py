@@ -80,7 +80,7 @@ class TenantAwareDB:
         brand_voice: str,
         escalation_rules: dict,
         active_channels: dict,
-        custom_instructions: str = None,
+        custom_instructions: Optional[str] = None,
     ) -> TenantConfig:
         """Set or update tenant configuration."""
         config = (
@@ -133,7 +133,7 @@ class TenantAwareDB:
         return source
 
     def get_tenant_knowledge_sources(
-        self, tenant_id: uuid.UUID, sync_status: str = None
+        self, tenant_id: uuid.UUID, sync_status: Optional[str] = None
     ) -> List[KnowledgeSource]:
         """
         Retrieve knowledge sources for a tenant (tenant-isolated).
@@ -176,8 +176,8 @@ class TenantAwareDB:
         tenant_id: uuid.UUID,
         source_id: uuid.UUID,
         content_payload: str,
-        metadata: dict = None,
-        embedding_vector: str = None,
+        metadata: Optional[dict] = None,
+        embedding_vector: Optional[str] = None,
     ) -> VectorEmbedding:
         """Add a new vector embedding chunk (tenant-isolated)."""
         embedding = VectorEmbedding(
@@ -224,10 +224,10 @@ class TenantAwareDB:
         tenant_id: uuid.UUID,
         customer_id: str,
         input_message: str,
-        output_message: str = None,
-        agent_chain: str = None,
+        output_message: Optional[str] = None,
+        agent_chain: Optional[str] = None,
         escalated: bool = False,
-        escalation_reason: str = None,
+        escalation_reason: Optional[str] = None,
     ) -> InteractionLog:
         """Log a customer interaction (tenant-isolated)."""
         log = InteractionLog(

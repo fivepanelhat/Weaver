@@ -28,6 +28,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.dialects.postgresql import UUID as PGUUID, JSONB
 from datetime import datetime
 import uuid
+from typing import Optional
 
 Base = declarative_base()
 
@@ -280,7 +281,7 @@ class BranchLineageHealth(Base):
 # ============================================================================
 
 
-def init_db(database_url: str = None) -> tuple:
+def init_db(database_url: Optional[str] = None) -> tuple:
     """
     Initialize the database engine and session factory.
 
