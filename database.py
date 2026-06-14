@@ -19,6 +19,7 @@ from models import (
     VectorEmbedding,
     InteractionLog,
     BranchLineageHealth,
+    NodeFleetHealth,
 )
 
 # Initialize at module load

@@ -276,6 +276,23 @@ class BranchLineageHealth(Base):
         return f"<BranchLineageHealth(id={self.id}, repository='{self.repository}', status='{self.status}')>"
 
 
+class NodeFleetHealth(Base):
+    """
+    Tracks fleet telemetry and health metrics for active edge nodes.
+    """
+
+    __tablename__ = "node_fleet_health"
+
+    node_id = Column(String(100), primary_key=True)
+    status = Column(String(50), nullable=False)
+    cpu_temp_celsius = Column(Integer, nullable=True)
+    memory_usage_percent = Column(Integer, nullable=True)
+    last_ping = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<NodeFleetHealth(node_id='{self.node_id}', status='{self.status}')>"
+
+
 # ============================================================================
 # Database Connection & Session Factory
 # ============================================================================
