@@ -18,6 +18,7 @@ from models import (
     KnowledgeSource,
     VectorEmbedding,
     InteractionLog,
+    BranchLineageHealth,
 )
 
 # Initialize at module load
@@ -288,11 +289,11 @@ def get_db_session():
 def initialize_database():
     """Create all tables if they don't exist."""
     create_all_tables(engine)
-    print("✓ Database tables initialized.")
+    print("[OK] Database tables initialized.")
 
 
 # Auto-initialize tables on import
 try:
     initialize_database()
 except Exception as e:
-    print(f"⚠ Database initialization warning: {e}")
+    print(f"[Warning] Database initialization warning: {e}")

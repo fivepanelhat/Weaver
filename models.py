@@ -253,6 +253,28 @@ class InteractionLog(Base):
             self.escalated})>"
 
 
+class BranchLineageHealth(Base):
+    """
+    Tracks the health of active git branches against main.
+    Used by the realtime engine to wake an agent when divergence is fatal.
+    """
+
+    __tablename__ = "branch_lineage_health"
+
+    id = Column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    repository = Column(String(100), nullable=False)
+    base_branch = Column(String(100), nullable=False)
+    compare_branch = Column(String(100), nullable=False)
+    status = Column(String(50), nullable=False)  # 'identical', 'ahead', 'behind', 'diverged', 'orphaned'
+    common_ancestor_sha = Column(String(40), nullable=True)
+    last_checked = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<BranchLineageHealth(id={self.id}, repository='{self.repository}', status='{self.status}')>"
+
+
 # ============================================================================
 # Database Connection & Session Factory
 # ============================================================================
