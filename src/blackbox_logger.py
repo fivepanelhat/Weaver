@@ -3,9 +3,9 @@ import os
 import time
 from paho.mqtt import client as mqtt_client
 
-BROKER = "127.0.0.1"
-PORT = 1883
-TOPIC = "weaver/logs"
+BROKER = os.getenv("MQTT_BROKER", "127.0.0.1")
+PORT = int(os.getenv("MQTT_PORT", "1883"))
+TOPIC = os.getenv("MQTT_TOPIC", "weaver/logs")
 LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "weaver_blackbox.log")
 
 

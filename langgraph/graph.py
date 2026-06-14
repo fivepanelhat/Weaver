@@ -142,4 +142,69 @@ class _CompiledGraph:
 
         return state
 
+    def stream(
+        self,
+        state: dict,
+        config: Optional[dict] = None,
+        *runtime_args,
+        max_steps: int = 100,
+        **runtime_kwargs
+    ):
+        """Mock stream method to match LangGraph API and yield node updates."""
+        if self._entry is None:
+            raise RuntimeError("Entry point not set on StateGraph")
+
+        current = self._entry
+        steps = 0
+
+        while current is not None and current is not END and steps < max_steps:
+            steps += 1
+            node_fn = self._nodes.get(current)
+            if node_fn is None:
+                break
+
+            result = node_fn(state, *runtime_args, **runtime_kwargs) or {}
+
+            # Merge conversational history
+            if "conversation_history" in result:
+                existing = state.get("conversation_history", [])
+                state["conversation_history"] = (
+                    existing + result["conversation_history"]
+                )
+                del result["conversation_history"]
+
+            state.update(result)
+
+            # Yield update matching langgraph structure
+            yield {current: result}
+
+            # Evaluate edges
+            next_node = None
+            for cond, dst in self._edges.get(current, []):
+                if cond is None:
+                    next_node = dst
+                    break
+                try:
+                    res = cond(state)
+                except Exception:
+                    res = None
+
+                if isinstance(res, str):
+                    next_node = res
+                    break
+                if res is True and dst is not None:
+                    next_node = dst
+                    break
+
+            if next_node is None:
+                cls = state.get("classification")
+                if isinstance(cls, str) and cls in self._nodes:
+                    next_node = cls
+
+            if next_node is None or next_node is END:
+                break
+
+            current = next_node
+
     invoke = run
+
