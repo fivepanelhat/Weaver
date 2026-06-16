@@ -191,12 +191,6 @@ weaver/
 
 ## License
 
-This project is Licensed under the Coastal Alpine Tech Limited License. See `LICENSE` for details.
-
----
-
-## License
-
 Coastal Alpine Tech Limited License — see [LICENSE](./LICENSE).
 
 ---
