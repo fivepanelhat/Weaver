@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weaver"
+dynamic = ["version"]
+authors = [
+  { name="Wayne Roberts", email="architecture@coastalalpinetech.local" },
+]
+description = "Sovereign multi-tenant AI routing and RAG orchestration at the edge (LangGraph-based)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary - Coastal Alpine Tech Limited" }
+
+dependencies = [
+    "SQLAlchemy>=2.0.0,<3.0.0",
+    "psycopg2-binary>=2.9.12",
+    "langchain-text-splitters>=1.1.2,<2.0.0",
+    "langchain-community>=0.4.2,<1.0.0",
+    "langgraph>=0.2.0,<1.0.0",
+    "paho-mqtt>=1.6.1",
+    "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.0.0",
+    "mypy>=1.10.0",
+    "ruff>=0.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["weaver*", "agents*", "orchestrator*", "knowledge_base*", "database*", "models*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
