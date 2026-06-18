@@ -78,7 +78,7 @@ The fastest way to install is running the cross-platform bootstrap script:
 python bootstrap.py
 ```
 
-d weaver
+Weaver
 python bootstrap.py
 ```
 
