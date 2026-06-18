@@ -58,7 +58,7 @@ Additional challenges addressed:
 ### Prerequisites
 
 - Python 3.10+
-- Ollama with a local LLM (e.g., Gemma)
+- Ollama with a local LLM Gemma 4 E4B
 - PostgreSQL (optional) or in-memory mode
 
 ### Installation & Setup
@@ -184,7 +184,7 @@ Weaver/
 ## Technology Stack
 
 **Hardware**  
-- Edge devices (Raspberry Pi 5 recommended) with NPU support
+- 40 Tops Edge AI device Raspberry Pi 5 16GB Hailo Accelerator with NPU support
 
 **Software**  
 - Orchestration: LangGraph  
@@ -210,8 +210,8 @@ Weaver/
 
 ## Performance & Benchmarks
 
-* **Local Inference Latency:** ~1.10 seconds per routing decision executing Gemma 4 via Ollama.
-* **Energy Consumption:** Average active power draw is ~6.2W running on a headless Raspberry Pi 5 node.
+* **Local Inference Latency:** ~1.10 seconds per routing decision executing Gemma 4 E4B via Ollama.
+* **Energy Consumption:** Average active power draw is ~6.2W running on a headless Raspberry Pi 5 16GB node.
 * **Storage Footprint:** SQL and vectorized SQLite databases consume <200MB, leaving ample space on edge SD cards.
 
 ---
