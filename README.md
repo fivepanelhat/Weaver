@@ -1,10 +1,7 @@
 # Weaver: AI-Native Multi-Tenant Agentic Mesh
 
-<<<<<<< Updated upstream
-=======
 ![CI](https://github.com/fivepanelhat/weaver/actions/workflows/secops.yml/badge.svg?branch=main)
 
->>>>>>> Stashed changes
 ![Weaver Banner](assets/social_preview.png)
 
 **Coastal Alpine Tech Limited**  
