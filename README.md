@@ -114,7 +114,7 @@ flowchart TD
 ## Directory Structure
 
 ```bash
-weaver/
+Weaver/
 ├── agent_knowledge_base/      # Policy, ethics, and platform runbooks
 ├── langgraph/                 # Core Graph structures
 │   ├── graph.py               # StateGraph compiler
@@ -149,7 +149,7 @@ weaver/
 
 ## Real-World Examples and Implementation
 
-- **Civil Construction Helpdesk**: Deployed on-premise at a New Zealand construction firm to route project compliance queries across multiple subcontractors while maintaining strict data isolation per client.
+- **Civil Construction Helpdesk**: Deployed on-premise at a New Zealand construction firm to route project compliance queries across multiple subcontractors while   maintaining strict data isolation per client.
 - **Agritech Support Platform**: Used by cooperatives in Horowhenua to provide localized advisory services without exposing farm data to third-party clouds.
 - **White-Label Service Providers**: Integrated into existing SaaS platforms where clients demand sovereign data handling.
 
