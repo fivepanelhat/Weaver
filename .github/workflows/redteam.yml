@@ -2,7 +2,7 @@
 name: RedTeam Tests
 on:
   schedule:
-    - cron: "0 2 * * *"  # daily at 02:00 UTC
+    - cron: "0 */8 * * *"
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y zaproxy
       - name: Run ZAP baseline scan
         run: |
-          zap-baseline.py -t https://your-app-url -g gen -r zap_report.html
+          zap-baseline.py -t https://example.com -g gen -r zap_report.html
       - name: Upload ZAP report
         uses: actions/upload-artifact@v4
         with:

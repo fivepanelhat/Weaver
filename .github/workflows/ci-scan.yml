@@ -1,6 +1,8 @@
 
 name: CI Scan
 on:
+  schedule:
+    - cron: "0 */8 * * *"
   push:
     branches: [ main ]
   pull_request:
@@ -17,21 +19,23 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Install dependencies
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python -m pip install --upgrade pip
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git
-          pip install -r requirements-dev.txt
+          if [ -f requirements-dev.txt ]; then
+            pip install -r requirements-dev.txt
+          else
+            pip install flake8 pytest
+          fi
       - name: Run linters
-        run: |
-          flake8 . --exclude=.venv,node_modules,build,dist,tests_security_stress
+        run: flake8 . --exclude=.venv,node_modules,build,dist,tests_security_stress
       - name: Run tests
-        run: |
-          pytest
+        run: pytest
