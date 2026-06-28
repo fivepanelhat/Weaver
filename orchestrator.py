@@ -36,6 +36,12 @@ class _KnowledgeBaseClient:
         return []
 
 
+def _measurement_value(measurement: Any, key: str, default: Any) -> Any:
+    if isinstance(measurement, dict):
+        return measurement.get(key, default)
+    return getattr(measurement, key, default)
+
+
 class AgentOrchestrator:
     """
     Enterprise orchestrator with full Data Flywheel + Bayesian Optimisation scaffolding.
@@ -72,6 +78,10 @@ class AgentOrchestrator:
         )
         result = intake_agent.process_interaction(message)
 
+        TelemetryTracker.complete_measurement(
+            measurement, include_system_metrics=True
+        )
+
         # === Data Flywheel Recording ===
         try:
             traj = Trajectory(
@@ -81,16 +91,22 @@ class AgentOrchestrator:
                 input_summary=str(message)[:300],
                 output_summary=str(result)[:300],
                 outcome="success" if result.get("status") != "error" else "failure",
-                latency_seconds=0.0,  # populated after complete_measurement
-                estimated_energy_joules=0.0,
-                system_metrics={},
-                metadata={"tenant_id": self.tenant_id},
+                latency_seconds=_measurement_value(
+                    measurement, "latency_seconds", 0.0
+                ),
+                estimated_energy_joules=_measurement_value(
+                    measurement, "estimated_energy_joules", 0.0
+                ),
+                system_metrics=_measurement_value(
+                    measurement, "system_metrics", {}
+                ),
+                metadata={"tenant_id": self.tenant_id, "flywheel_mode": "best_effort"},
             )
             self.flywheel.record_trajectory(traj)
         except Exception as exc:
-            logger.warning("Flywheel recording failed: %s", exc)
-
-        TelemetryTracker.complete_measurement(measurement, include_system_metrics=True)
+            logger.warning(
+                "Flywheel recording failed in best-effort mode: %s", exc
+            )
 
         # Optional: Ask BO hook for suggestions periodically
         if len(self.flywheel.get_recent_trajectories(10)) % 20 == 0:
