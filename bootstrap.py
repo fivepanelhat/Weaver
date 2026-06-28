@@ -18,6 +18,7 @@ Works with:
 
 import os
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -81,9 +82,9 @@ def run_cmd(cmd, description=None):
     if description:
         print(f"  → {description}")
     try:
+        args = cmd if isinstance(cmd, list) else shlex.split(cmd)
         result = subprocess.run(
-            cmd,
-            shell=True,
+            args,
             check=True,
             capture_output=True,
             text=True,
