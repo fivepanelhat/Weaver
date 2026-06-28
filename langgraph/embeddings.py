@@ -54,8 +54,10 @@ class SovereignEmbeddingEngine:
         ]
         tenant_id = processed_chunks[0]["tenant_id"]
 
-        print(f"Generating sovereign embeddings for {
-                len(texts_to_embed)} chunks. Tenant: {tenant_id}...")
+        print(
+            f"Generating sovereign embeddings for {len(texts_to_embed)} "
+            f"chunks. Tenant: {tenant_id}..."
+        )
 
         # 2. Run embedding
         if self.embedder is not None:
@@ -80,6 +82,8 @@ class SovereignEmbeddingEngine:
         # if self.db is not None:
         #     self.db.insert(collection_name="knowledge_embeddings", data=ready_records)
 
-        print(f"Prepared {
-                len(ready_records)} vector records for Tenant {tenant_id}.")
+        print(
+            f"Prepared {len(ready_records)} vector records for Tenant "
+            f"{tenant_id}."
+        )
         return ready_records

@@ -75,8 +75,10 @@ def on_heartbeat_received(client, userdata, msg):
             "battery_mv": payload.get("battery_mv"),
             "posture_state": payload.get("posture"),
         }
-        print(f"[FLEET MONITOR] Node {node_id} reported in. Status: {
-                payload.get('posture')}")
+        print(
+            f"[FLEET MONITOR] Node {node_id} reported in. Status: "
+            f"{payload.get('posture')}"
+        )
     except Exception as e:
         print(f"[FLEET ERROR] Corrupted heartbeat frame: {e}")
 

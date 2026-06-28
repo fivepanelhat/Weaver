@@ -85,6 +85,8 @@ class AgnosticDataIngestionEngine:
             }
             processed_chunks.append(chunk_record)
 
-        print(f"Processed {
-                len(processed_chunks)} chunks for Tenant: {tenant_id}")
+        print(
+            f"Processed {len(processed_chunks)} chunks for Tenant: "
+            f"{tenant_id}"
+        )
         return processed_chunks

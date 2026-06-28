@@ -1,4 +1,5 @@
 # weaver/tests/stress/mqtt_flood.py
+import json
 import time
 import threading
 import random
@@ -29,11 +30,13 @@ def simulate_node(node_id):
 
         for _ in range(MESSAGES_PER_NODE):
             # Simulate a standard telemetry packet
-            payload = f'{
-                {"node": {node_id}, "moisture": {
-                    random.uniform(
-                        20.0, 80.0)}, "ts": {
-                    time.time()}}}'
+            payload = json.dumps(
+                {
+                    "node": node_id,
+                    "moisture": random.uniform(20.0, 80.0),
+                    "ts": time.time(),
+                }
+            )
             client.publish(TOPIC, payload, qos=1)
             time.sleep(0.001)  # Rapid blast
 
@@ -61,7 +64,7 @@ if __name__ == "__main__":
 
     duration = time.time() - start_time
     total_msgs = NUM_SIMULATED_NODES * MESSAGES_PER_NODE
-    print(f"Test finished. Dispatched {total_msgs} messages in {
-            duration:.2f} seconds ({
-            total_msgs /
-            duration:.1f} msgs/sec).")
+    print(
+        f"Test finished. Dispatched {total_msgs} messages in "
+        f"{duration:.2f} seconds ({total_msgs / duration:.1f} msgs/sec)."
+    )
