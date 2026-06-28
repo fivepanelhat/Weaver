@@ -22,7 +22,7 @@ class _MemoryStore:
 
 
 class _KnowledgeBaseClient:
-    def query(self, _query: str, _tenant_id: str):
+    def query(self, query: str, tenant_id: str):
         return []
 
 
