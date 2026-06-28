@@ -29,9 +29,10 @@ class IntakeAgent:
 
     def process_interaction(self, unified_message):
         """Main entry point from the Orchestrator."""
-        print(f"Intake Agent: Processing incoming message ID {
-                unified_message.get('id')} for tenant {
-                self.tenant_id}")
+        print(
+            f"Intake Agent: Processing incoming message ID "
+            f"{unified_message.get('id')} for tenant {self.tenant_id}"
+        )
 
         # 1. Extract and verify customer details
         customer_profile = self._collect_customer_info(unified_message)
@@ -160,9 +161,10 @@ class FulfilmentAgent:
 
     def execute_task(self, task_context):
         """Main execution block triggered by the Orchestrator."""
-        print(f"Fulfillment Agent: Executing task for customer {
-                task_context.get('customer_id')} on tenant {
-                self.tenant_id}")
+        print(
+            f"Fulfillment Agent: Executing task for customer "
+            f"{task_context.get('customer_id')} on tenant {self.tenant_id}"
+        )
 
         intent = task_context.get("intent")
 
@@ -239,8 +241,10 @@ class ResolutionAgent:
 
     def handle_issue(self, issue_context):
         """Resolves edge cases or handles failed fulfilment tasks."""
-        print(f"Resolution Agent: Troubleshooting issue {
-                issue_context.get('issue_id')}")
+        print(
+            f"Resolution Agent: Troubleshooting issue "
+            f"{issue_context.get('issue_id')}"
+        )
 
         # Log the intervention for metrics
         self.logger.log_event("agent_intervention", issue_context)

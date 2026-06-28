@@ -71,10 +71,11 @@ class Tenant(Base):
     )
 
     def __repr__(self):
-        return f"<Tenant(tenant_id={
-            self.tenant_id}, company_name='{
-            self.company_name}', industry='{
-            self.industry}')>"
+        return (
+            f"<Tenant(tenant_id={self.tenant_id}, "
+            f"company_name='{self.company_name}', "
+            f"industry='{self.industry}')>"
+        )
 
 
 class TenantConfig(Base):
@@ -113,9 +114,10 @@ class TenantConfig(Base):
     tenant = relationship("Tenant", back_populates="configs")
 
     def __repr__(self):
-        return f"<TenantConfig(config_id={
-            self.config_id}, tenant_id={
-            self.tenant_id})>"
+        return (
+            f"<TenantConfig(config_id={self.config_id}, "
+            f"tenant_id={self.tenant_id})>"
+        )
 
 
 class KnowledgeSource(Base):
@@ -162,11 +164,12 @@ class KnowledgeSource(Base):
     )
 
     def __repr__(self):
-        return f"<KnowledgeSource(source_id={
-            self.source_id}, tenant_id={
-            self.tenant_id}, source_type='{
-            self.source_type}', sync_status='{
-                self.sync_status}')>"
+        return (
+            f"<KnowledgeSource(source_id={self.source_id}, "
+            f"tenant_id={self.tenant_id}, "
+            f"source_type='{self.source_type}', "
+            f"sync_status='{self.sync_status}')>"
+        )
 
 
 class VectorEmbedding(Base):
@@ -206,10 +209,10 @@ class VectorEmbedding(Base):
     source = relationship("KnowledgeSource", back_populates="embeddings")
 
     def __repr__(self):
-        return f"<VectorEmbedding(chunk_id={
-            self.chunk_id}, tenant_id={
-            self.tenant_id}, source_id={
-            self.source_id})>"
+        return (
+            f"<VectorEmbedding(chunk_id={self.chunk_id}, "
+            f"tenant_id={self.tenant_id}, source_id={self.source_id})>"
+        )
 
 
 class InteractionLog(Base):
@@ -248,10 +251,10 @@ class InteractionLog(Base):
     tenant = relationship("Tenant", back_populates="interaction_logs")
 
     def __repr__(self):
-        return f"<InteractionLog(interaction_id={
-            self.interaction_id}, tenant_id={
-            self.tenant_id}, escalated={
-            self.escalated})>"
+        return (
+            f"<InteractionLog(interaction_id={self.interaction_id}, "
+            f"tenant_id={self.tenant_id}, escalated={self.escalated})>"
+        )
 
 
 class BranchLineageHealth(Base):

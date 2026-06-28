@@ -63,8 +63,10 @@ def generate_tpm_quote(nonce_hex):
         return attestation_payload
 
     except subprocess.CalledProcessError as e:
-        print(f"[CRITICAL HARDWARE FAULT] TPM execution failed: {
-                e.stderr.decode()}")
+        print(
+            f"[CRITICAL HARDWARE FAULT] TPM execution failed: "
+            f"{e.stderr.decode()}"
+        )
         return None
     finally:
         # Cleanup volatile staging files
