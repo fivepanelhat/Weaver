@@ -18,6 +18,7 @@ Works with:
 
 import os
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -82,8 +83,7 @@ def run_cmd(cmd, description=None):
         print(f"  → {description}")
     try:
         result = subprocess.run(
-            cmd,
-            shell=True,
+            shlex.split(cmd),
             check=True,
             capture_output=True,
             text=True,
