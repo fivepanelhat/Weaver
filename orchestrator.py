@@ -1,18 +1,8 @@
-import logging
-import time
-import uuid
 from typing import Any, Dict, Optional
 
 from agents import IntakeAgent
-from coastal_alpine_core.flywheel import (
-    BayesianOptimisationHook,
-    DataFlywheel,
-    Trajectory,
-)
 from coastal_alpine_core.security import SecurityGuard
 from coastal_alpine_core.telemetry import TelemetryTracker
-
-logger = logging.getLogger(__name__)
 
 
 class _MemoryStore:
@@ -36,15 +26,9 @@ class _KnowledgeBaseClient:
         return []
 
 
-def _measurement_value(measurement: Any, key: str, default: Any) -> Any:
-    if isinstance(measurement, dict):
-        return measurement.get(key, default)
-    return getattr(measurement, key, default)
-
-
 class AgentOrchestrator:
     """
-    Enterprise orchestrator with full Data Flywheel + Bayesian Optimisation scaffolding.
+    Demo orchestrator that wraps the intake agent with security and telemetry checks.
     """
 
     def __init__(
@@ -58,9 +42,13 @@ class AgentOrchestrator:
         self.tenant_config = tenant_config or {}
         self.knowledge_base_client = knowledge_base_client or _KnowledgeBaseClient()
         self.memory_store = memory_store or _MemoryStore()
-        self.flywheel = DataFlywheel(storage_path=f"flywheel_{tenant_id}.jsonl")
-        self.bo_hook = BayesianOptimisationHook()
         self.security_guard = SecurityGuard()
+        self.intake_agent = IntakeAgent(
+            self.knowledge_base_client,
+            self.memory_store,
+            tenant_id=self.tenant_id,
+            tenant_config=self.tenant_config,
+        )
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         # Security + Telemetry as before...
@@ -69,48 +57,10 @@ class AgentOrchestrator:
             return {"status": "blocked"}
 
         measurement = TelemetryTracker.measure_latency("orchestrator_process_message")
-
-        intake_agent = IntakeAgent(
-            self.knowledge_base_client,
-            self.memory_store,
-            tenant_id=self.tenant_id,
-            tenant_config=self.tenant_config,
-        )
-        result = intake_agent.process_interaction(message)
+        result = self.intake_agent.process_interaction(message)
 
         TelemetryTracker.complete_measurement(
             measurement, include_system_metrics=True
         )
-
-        # === Data Flywheel Recording ===
-        try:
-            traj = Trajectory(
-                trajectory_id=str(uuid.uuid4()),
-                timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                action="process_message",
-                input_summary=str(message)[:300],
-                output_summary=str(result)[:300],
-                outcome="success" if result.get("status") != "error" else "failure",
-                latency_seconds=_measurement_value(
-                    measurement, "latency_seconds", 0.0
-                ),
-                estimated_energy_joules=_measurement_value(
-                    measurement, "estimated_energy_joules", 0.0
-                ),
-                system_metrics=_measurement_value(
-                    measurement, "system_metrics", {}
-                ),
-                metadata={"tenant_id": self.tenant_id, "flywheel_mode": "best_effort"},
-            )
-            self.flywheel.record_trajectory(traj)
-        except Exception as exc:
-            logger.warning(
-                "Flywheel recording failed in best-effort mode: %s", exc
-            )
-
-        # Optional: Ask BO hook for suggestions periodically
-        if len(self.flywheel.get_recent_trajectories(10)) % 20 == 0:
-            suggestion = self.bo_hook.suggest_next_configuration({"current_latency": 2.3})
-            logger.info("BO Suggestion: %s", suggestion)
 
         return result
