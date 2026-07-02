@@ -4,7 +4,7 @@
 
 **Date:** 23 May 2026
 
-This document defines the communication schemas for the agentic architecture. It builds directly upon the previously defined agent roles and ensures reliable, secure, and efficient interaction within the sovereign, on-premise environment on the Raspberry Pi 16GB with Hailo-10H NPU.
+This document defines the communication schemas for the agentic architecture. It builds directly upon the previously defined agent roles and ensures reliable, secure, and efficient interaction within the sovereign, on-premise environment on the Raspberry Pi 16GB with Hailo-10L NPU.
 
 ### 1. Communication Architecture Overview
 

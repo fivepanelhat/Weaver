@@ -25,7 +25,7 @@ If you prefer to perform the setup steps manually:
 3. Upgrade pip and install dependencies:
    ```bash
    pip install --upgrade pip
-   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git
+   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
    pip install -r requirements-dev.txt
    ```
 
@@ -54,6 +54,6 @@ If you prefer to perform the setup steps manually:
 3. Upgrade pip and install dependencies:
    ```powershell
    python -m pip install --upgrade pip
-   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git
+   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
    pip install -r requirements-dev.txt
    ```
