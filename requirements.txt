@@ -3,7 +3,7 @@ psycopg2-binary>=2.9.12
 langchain-text-splitters>=1.1.2,<2.0.0
 langchain-community>=0.4.2,<1.0.0
 langgraph>=0.2.0,<1.0.0
-coastal-alpine-core @ git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
+coastal-alpine-core @ git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.3.0
 pydantic>=2.5.0,<3.0.0
 paho-mqtt>=1.6.1
 
