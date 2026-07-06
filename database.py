@@ -283,6 +283,11 @@ def get_db_session():
     session = SessionLocal()
     try:
         yield TenantAwareDB(session)
+    except Exception:
+        # A failed commit leaves the session dirty; roll back before closing
+        # so pooled connections aren't returned mid-transaction.
+        session.rollback()
+        raise
     finally:
         session.close()
 

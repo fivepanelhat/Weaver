@@ -1,3 +1,4 @@
+import heapq
 import json
 import uuid
 import math
@@ -94,14 +95,14 @@ class InMemoryKnowledgeBaseClient(KnowledgeBaseClient):
             score = cosine_similarity(query_vector, chunk["vector"])
             candidates.append((score, chunk))
 
-        candidates.sort(key=lambda item: item[0], reverse=True)
+        top = heapq.nlargest(top_k, candidates, key=lambda item: item[0])
         return [
             {
                 "content": chunk["content"],
                 "metadata": chunk["metadata"],
                 "score": score,
             }
-            for score, chunk in candidates[:top_k]
+            for score, chunk in top
         ]
 
 
@@ -115,11 +116,7 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
     def add_document(
         self, tenant_id: str, content: str, metadata: Dict[str, Any] = None
     ) -> None:
-        source_id = (
-            getattr(metadata, "source_id", None) or metadata.get("source_id")
-            if metadata
-            else None
-        )
+        source_id = metadata.get("source_id") if metadata else None
 
         # If embedder supports batch embed_and_store (sovereign engines), use
         # it
@@ -174,12 +171,12 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
             score = cosine_similarity(query_vector, embedding)
             scored.append((score, row))
 
-        scored.sort(key=lambda item: item[0], reverse=True)
+        top = heapq.nlargest(top_k, scored, key=lambda item: item[0])
         return [
             {
                 "content": row.content_payload,
                 "metadata": row.embedding_metadata,
                 "score": score,
             }
-            for score, row in scored[:top_k]
+            for score, row in top
         ]
