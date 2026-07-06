@@ -78,7 +78,7 @@ def get_activate_cmd(venv_path):
 
 
 def run_cmd(cmd, description=None):
-    """Run a shell command with error handling."""
+    """Run a command (argument list, no shell) with error handling."""
     if description:
         print(f"  → {description}")
     try:
@@ -135,7 +135,7 @@ def install_requirements(pip_exe, req_file):
         return True
 
     result = run_cmd(
-        f'"{pip_exe}" install -r {req_file}',
+        [pip_exe, "install", "-r", req_file],
         f"Installing {req_file}",
     )
     return result is not None
@@ -145,12 +145,12 @@ def install_core(pip_exe, editable=False):
     """Install coastal_alpine_core package."""
     if editable and os.path.exists(CORE_PACKAGE):
         result = run_cmd(
-            f'"{pip_exe}" install -e ./{CORE_PACKAGE}',
+            [pip_exe, "install", "-e", f"./{CORE_PACKAGE}"],
             "Installing coastal_alpine_core (editable mode)",
         )
     else:
         result = run_cmd(
-            f'"{pip_exe}" install git+{CORE_GIT_URL}',
+            [pip_exe, "install", f"git+{CORE_GIT_URL}"],
             "Installing coastal_alpine_core from GitHub",
         )
     return result is not None
@@ -201,7 +201,7 @@ def setup_monorepo():
 
     # Step 2: Upgrade pip
     print_step(2, total_steps, "Upgrading pip")
-    run_cmd(f'"{pip_exe}" install --upgrade pip', "Upgrading pip")
+    run_cmd([pip_exe, "install", "--upgrade", "pip"], "Upgrading pip")
 
     # Step 3: Install core
     print_step(3, total_steps, "Installing coastal_alpine_core")
@@ -239,7 +239,7 @@ def setup_portal():
 
     # Step 2: Upgrade pip
     print_step(2, total_steps, "Upgrading pip")
-    run_cmd(f'"{pip_exe}" install --upgrade pip', "Upgrading pip")
+    run_cmd([pip_exe, "install", "--upgrade", "pip"], "Upgrading pip")
 
     # Step 3: Install core
     print_step(3, total_steps, "Installing coastal_alpine_core")
