@@ -3,6 +3,9 @@ on:
   schedule:
     - cron: "0 */8 * * *"
   workflow_dispatch:
+concurrency:
+  group: redteam-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -19,6 +22,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run adversarial / security stress suite
+        shell: bash
         # Replaces the previous job, which apt-installed a package that no
         # longer exists on ubuntu-latest (zaproxy) and pointed ZAP at
         # https://example.com — a third-party site we must not scan.

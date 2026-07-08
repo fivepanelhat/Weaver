@@ -2,10 +2,14 @@ name: CI Scan
 on:
   schedule:
     - cron: "0 */8 * * *"
+  workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
     types: [ opened, synchronize, reopened ]
+concurrency:
+  group: ci-scan-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   packages: read
@@ -23,6 +27,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install lint tooling
+        shell: bash
         # flake8 was previously only installed when requirements-dev.txt was
         # absent, so repos WITH dev requirements failed with exit 127.
         run: |
@@ -36,6 +41,7 @@ jobs:
         # scan gates only on errors that always indicate broken code.
         run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=.venv,venv,node_modules,build,dist,data,out
       - name: Run tests
+        shell: bash
         run: |
           if compgen -G "tests/test_*.py" > /dev/null; then
             if [ -f requirements.txt ]; then
