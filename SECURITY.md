@@ -30,7 +30,7 @@ Environment templates are set up to capture all required edge keys safely withou
 ## 3. GitHub Actions Pipelines
 Automated vulnerability scans are scheduled on the main repository via:
 * **Dependabot (`.github/dependabot.yml`):** Auto-evaluates Python pip packages weekly and creates patches for vulnerable dependencies.
-* **CodeQL Analysis (`.github/workflows/security-scan.yml`):** Performs deep static code analysis (SAST) on push/PR events to main.
+* **Bandit SAST Scan (`.github/workflows/secops.yml`):** Performs static code analysis (SAST) on push/PR events to main.
 
 ---
 
