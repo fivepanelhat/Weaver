@@ -5,16 +5,6 @@
 **Coastal Alpine Tech Limited**  
 *Edge AI | Sovereign Systems | Practical Intelligence*
 
-[![License](https://img.shields.io/badge/License-Proprietary--Commercial-blue?style=flat-square)](LICENSE)  
-[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square)](https://www.python.org/)  
-[![Hardware Target](https://img.shields.io/badge/Hardware-Raspberry%20Pi%205%2016GB-C11A5B?style=flat-square&logo=raspberry-pi&logoColor=white)]()  
-[![NPU Acceleration](https://img.shields.io/badge/NPU-Hailo--10H%20Accelerated-005A9C?style=flat-square)]()  
-[![Sovereignty](https://img.shields.io/badge/Sovereignty-NZ%20Data%20Bound-00247D?style=flat-square)]()  
-[![CI](https://github.com/fivepanelhat/Weaver/actions/workflows/ci-scan.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/Weaver/actions/workflows/ci-scan.yml)  
-[![SecOps Scan](https://img.shields.io/github/actions/workflow/status/fivepanelhat/Weaver/secops.yml?branch=main&label=SecOps%20Scan&style=flat-square&color=success)](https://github.com/fivepanelhat/Weaver/actions/workflows/secops.yml)  
-[![RedTeam](https://img.shields.io/github/actions/workflow/status/fivepanelhat/Weaver/redteam.yml?branch=main&label=RedTeam&style=flat-square&color=critical)](https://github.com/fivepanelhat/Weaver/actions/workflows/redteam.yml)  
-[![Dependabot](https://img.shields.io/badge/Dependencies-Monitored-brightgreen?style=flat-square&logo=dependabot)]()  
-[![Sustainability](https://img.shields.io/badge/EECA%20NZ-Carbon%20Tracked-green?style=flat-square)]()
 
 White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval and local LangGraph orchestration.
 
@@ -236,3 +226,20 @@ Questions or collaboration? Contact Coastal Alpine Tech Limited.
 ---
 
 *Last updated: June 2026*
+
+---
+
+## Project badges
+
+Status badges for this repository (CI, security, license, and stack metadata):
+
+[![License](https://img.shields.io/badge/License-Proprietary--Commercial-blue?style=flat-square)](LICENSE)  
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square)](https://www.python.org/)  
+[![Hardware Target](https://img.shields.io/badge/Hardware-Raspberry%20Pi%205%2016GB-C11A5B?style=flat-square&logo=raspberry-pi&logoColor=white)]()  
+[![NPU Acceleration](https://img.shields.io/badge/NPU-Hailo--10H%20Accelerated-005A9C?style=flat-square)]()  
+[![Sovereignty](https://img.shields.io/badge/Sovereignty-NZ%20Data%20Bound-00247D?style=flat-square)]()  
+[![CI](https://github.com/fivepanelhat/Weaver/actions/workflows/ci-scan.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/Weaver/actions/workflows/ci-scan.yml)  
+[![SecOps](https://img.shields.io/github/actions/workflow/status/fivepanelhat/Weaver/secops.yml?branch=main&label=SecOps&style=flat-square&color=success)](https://github.com/fivepanelhat/Weaver/actions/workflows/secops.yml)  
+[![RedTeam](https://img.shields.io/github/actions/workflow/status/fivepanelhat/Weaver/redteam.yml?branch=main&label=RedTeam&style=flat-square&color=critical)](https://github.com/fivepanelhat/Weaver/actions/workflows/redteam.yml)  
+[![Dependabot](https://img.shields.io/badge/Dependencies-Monitored-brightgreen?style=flat-square&logo=dependabot)]()  
+[![Sustainability](https://img.shields.io/badge/EECA%20NZ-Carbon%20Tracked-green?style=flat-square)]()
