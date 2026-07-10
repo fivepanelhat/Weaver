@@ -3,7 +3,9 @@ psycopg2-binary>=2.9.12
 langchain-text-splitters>=1.1.2,<2.0.0
 langchain-community>=0.4.2,<1.0.0
 langgraph>=1.0.10
-coastal-alpine-core @ git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.5.2
+langsmith>=0.8.18  # GHSA-f4xh-w4cj-qxq8 TracingMiddleware arbitrary file read
+coastal-alpine-core @ git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.5.3
 pydantic>=2.5.0,<3.0.0
+pydantic-settings>=2.14.2  # GHSA-4xgf-cpjx-pc3j secrets_dir symlink escape
 paho-mqtt>=1.6.1
 
