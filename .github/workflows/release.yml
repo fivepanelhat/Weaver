@@ -20,7 +20,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0
       - name: Create Draft Release
-        uses: softprops/action-gh-release@v2.2.1
+        uses: softprops/action-gh-release@v3.0.1
         with:
           draft: true
           prerelease: false
