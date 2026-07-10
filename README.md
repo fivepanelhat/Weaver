@@ -184,7 +184,7 @@ Weaver/
 ## Technology Stack
 
 **Hardware**  
-- 40 Tops Edge AI device Raspberry Pi 5 16GB Hailo Accelerator with NPU support
+- **Raspberry Pi 5 (16GB)** with **Hailo-10H NPU** (40 TOPS AI Accelerator / AI HAT+ 2)
 
 **Software**  
 - Orchestration: LangGraph  
