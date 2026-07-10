@@ -16,7 +16,7 @@ Weaver is designed to provide secure, offline multi-tenant document retrieval an
                         ▼
                ┌─────────────────┐
                │  Orchestrator   │
-               │  (langgraph)    │
+               │  (weaver_graph)    │
                └────────┬────────┘
                         │
          ┌──────────────┼──────────────┐
@@ -54,7 +54,7 @@ Every database session initialization is scoped. All queries must pass a matchin
 
 ## 2. Agent Orchestration State Machine (LangGraph)
 
-Routing logic is compiled into a lightweight state machine under `langgraph/graph.py`:
+Routing logic is compiled into a lightweight state machine under `weaver_graph/graph.py`:
 
 ```text
 ┌──────────────┐
@@ -72,7 +72,7 @@ Routing logic is compiled into a lightweight state machine under `langgraph/grap
 └──────────────┘
 ```
 
-### Routing Nodes (`langgraph/orchestrator.py`):
+### Routing Nodes (`weaver_graph/orchestrator.py`):
 1. **Intake Agent:** Resolves request context, verifies tenant subscriptions, and sanitizes input prompts via `coastal_alpine_core.security.input_guard_check`.
 2. **Fulfillment Agent:** Performs local RAG (Retrieval Augmented Generation) by loading matching database facts, constructing prompts with tenant-specific voice parameters, and generating completions.
 3. **Resolution Agent:** Verifies output compliance and writes audit trail logs.

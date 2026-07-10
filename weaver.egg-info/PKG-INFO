@@ -1,3 +1,27 @@
+Metadata-Version: 2.4
+Name: weaver
+Version: 0.0.0
+Summary: Sovereign multi-tenant AI routing and RAG orchestration at the edge (LangGraph-based)
+Author-email: Wayne Roberts <architecture@coastalalpinetech.local>
+License: Proprietary - Coastal Alpine Tech Limited
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: SQLAlchemy<3.0.0,>=2.0.0
+Requires-Dist: psycopg2-binary>=2.9.12
+Requires-Dist: langchain-text-splitters<2.0.0,>=1.1.2
+Requires-Dist: langchain-community<1.0.0,>=0.4.2
+Requires-Dist: langgraph>=1.0.10
+Requires-Dist: paho-mqtt>=1.6.1
+Requires-Dist: coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.0; extra == "dev"
+Requires-Dist: black>=24.0.0; extra == "dev"
+Requires-Dist: mypy>=1.10.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+Dynamic: license-file
+
 # Weaver: AI-Native Multi-Tenant Agentic Mesh
 
 <p align="center">

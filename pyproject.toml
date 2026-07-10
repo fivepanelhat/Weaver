@@ -34,7 +34,15 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["weaver*", "agents*", "orchestrator*", "knowledge_base*", "database*", "models*"]
+include = [
+    "weaver_graph*",
+    "agents*",
+    "orchestrator*",
+    "knowledge_base*",
+    "database*",
+    "models*",
+    "src*",
+]
 
 [tool.ruff]
 line-length = 100

@@ -2,7 +2,8 @@ import uuid
 
 from knowledge_base import HashEmbeddingService, InMemoryKnowledgeBaseClient
 from orchestrator import AgentOrchestrator
-from langgraph.orchestrator import build_agnostic_helpdesk
+from weaver_graph.orchestrator import build_agnostic_helpdesk
+from weaver_graph.llm import LocalSovereignLLM
 
 
 class _MockDoc:
@@ -15,16 +16,7 @@ class MockVectorDBClient:
         self.docs = docs
 
     def similarity_search(self, query, filter=None, k=3):
-        # naive: return all docs that match tenant_id in metadata or all
         return [d for d in self.docs][:k]
-
-
-class MockLLM:
-    def invoke(self, prompt):
-        # simplistic heuristic: escalate if string ESCALATE present
-        if "ESCALATE" in prompt:
-            return "ESCALATE"
-        return "Scaffolded LLM Response based on local data."
 
 
 def main():
@@ -45,6 +37,7 @@ def main():
         metadata={"source": "Escalation Policy", "topic": "escalation"},
     )
 
+    # Agent path (default)
     orchestrator = AgentOrchestrator(
         tenant_id=tenant_id,
         tenant_config={
@@ -56,6 +49,8 @@ def main():
             ),
         },
         knowledge_base_client=kb_client,
+        llm=LocalSovereignLLM(),
+        use_graph=False,
     )
 
     message = {
@@ -67,11 +62,23 @@ def main():
     }
 
     result = orchestrator.process_message(message)
-    print("=== Demo Result ===")
+    print("=== Demo Result (agent path) ===")
     print(result)
 
-    # --- Langraph orchestrator smoke run ---
-    print("\n=== Langraph Orchestrator Smoke Run ===")
+    # Graph path with real KB retrieval
+    print("\n=== Weaver graph smoke run ===")
+    graph_orch = AgentOrchestrator(
+        tenant_id=tenant_id,
+        tenant_config=orchestrator.tenant_config,
+        knowledge_base_client=kb_client,
+        llm=LocalSovereignLLM(),
+        use_graph=True,
+    )
+    graph_result = graph_orch.process_message(message)
+    print(graph_result)
+
+    # Direct graph + mock vdb (matches unit tests)
+    print("\n=== Direct graph + vector mock ===")
     graph = build_agnostic_helpdesk()
     state = {
         "tenant_id": tenant_id,
@@ -82,16 +89,11 @@ def main():
         "classification": "",
         "conversation_history": [],
     }
-
     mock_docs = [
         _MockDoc("Our return policy allows refunds within 30 days."),
         _MockDoc("Custom cuts are non-refundable."),
     ]
-    vdb = MockVectorDBClient(mock_docs)
-    llm = MockLLM()
-
-    out = graph.run(state, vdb, llm)
-    print("Langraph run output:")
+    out = graph.run(state, MockVectorDBClient(mock_docs), LocalSovereignLLM())
     print(out)
 
 
