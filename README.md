@@ -128,27 +128,78 @@ pytest
 
 ## Architecture Overview
 
+Weaver routes multi-tenant requests entirely on the edge node: **RPi 5 16GB + Hailo-10H**, local Ollama, and tenant-isolated stores. No tenant data leaves the deployment site.
+
+![Weaver architecture — liquid glass overview](assets/architecture_overview.png)
+
+### System map
+
 ```mermaid
-flowchart TD
-    A[User Request] --> B["Orchestrator (LangGraph)"]
-    B --> C[Intake Agent]
-    B --> D[Fulfilment Agent]
-    B --> E[Resolution Agent]
-    C & D & E --> F[Tenant-Aware Knowledge Base]
-    F --> G[Isolated Vector + SQL Store]
-    G --> H[Local LLM via Ollama]
-    H --> B
-    B --> I[Actions & Responses]
-    subgraph "Data Sovereignty"
-        F
-        G
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "fontSize": "16px",
+    "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+    "primaryColor": "#0ea5e9",
+    "primaryTextColor": "#f8fafc",
+    "primaryBorderColor": "#38bdf8",
+    "lineColor": "#67e8f9",
+    "secondaryColor": "#1e293b",
+    "tertiaryColor": "#0f172a",
+    "clusterBkg": "#0b1220cc",
+    "clusterBorder": "#38bdf880",
+    "titleColor": "#e2e8f0"
+  },
+  "flowchart": {
+    "nodeSpacing": 40,
+    "rankSpacing": 48,
+    "padding": 20,
+    "htmlLabels": true,
+    "curve": "basis"
+  }
+}}%%
+flowchart TB
+
+    classDef sense fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
+    classDef edge fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
+    classDef core fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
+    classDef act fill:#422006,stroke:#fbbf24,stroke-width:2px,color:#fffbeb
+    classDef store fill:#1e1b4b,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
+    classDef ai fill:#3b0764,stroke:#e879f9,stroke-width:2px,color:#fdf4ff
+    classDef app fill:#1e1b4b,stroke:#c4b5fd,stroke-width:2px,color:#eef2ff
+
+    U["User / operator query"] --> ORCH["LangGraph orchestrator"]
+    ORCH --> IN["Intake agent<br/>auth · tenant scope"]
+    ORCH --> FU["Fulfilment agent<br/>RAG · tools"]
+    ORCH --> RE["Resolution agent<br/>response · actions"]
+    IN & FU & RE --> KB["Tenant-aware knowledge base"]
+    KB --> STORE["Isolated vector + SQL store"]
+    STORE --> LLM["Local LLM via Ollama<br/>Gemma 4 e4b"]
+    LLM --> ORCH
+    ORCH --> OUT["Actions & responses"]
+
+    subgraph EDGE["Sovereign edge — RPi 5 16GB + Hailo-10H"]
+        ORCH
+        KB
+        STORE
+        LLM
     end
-    style B fill:#4ade80,stroke:#166534
+
+    class U,OUT act
+    class ORCH,IN,FU,RE core
+    class KB,STORE store
+    class LLM ai
 ```
 
-*See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.*
+| Layer | Components | Role |
+| :--- | :--- | :--- |
+| **Orchestrator** | LangGraph state machine | Deterministic multi-agent routing |
+| **Agents** | Intake · Fulfilment · Resolution | Tenant-scoped task handling |
+| **Knowledge** | Isolated vector + SQL | No cross-tenant leakage |
+| **Inference** | Ollama on-device | Offline-capable responses |
+| **Hardware** | RPi 5 16GB + Hailo-10H | Canonical Coastal Alpine target |
 
----
+*Full detail: [ARCHITECTURE.md](./ARCHITECTURE.md)*
 
 ## Directory Structure
 
