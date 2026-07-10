@@ -1,10 +1,13 @@
 # Weaver: AI-Native Multi-Tenant Agentic Mesh
 
-![Weaver Banner](assets/social_preview.png)
+<p align="center">
+  <img src="assets/social_preview.png" alt="Weaver — Coastal Alpine Tech liquid glass banner" width="100%" />
+</p>
 
 **Coastal Alpine Tech Limited**  
 *Edge AI | Sovereign Systems | Practical Intelligence*
 
+**License: Proprietary — Coastal Alpine Tech Limited** · See [LICENSE](./LICENSE) (same Coastal Alpine proprietary terms as AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Core, and the rest of the edge stack).
 
 White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval and local LangGraph orchestration.
 
@@ -216,7 +219,11 @@ Weaver/
 
 ## License
 
-Coastal Alpine Tech Limited License — see [LICENSE](./LICENSE).
+This project is licensed under the **Coastal Alpine Tech Limited License** (proprietary / commercial) — the same license used across the Kiwi Edge AI Stack (Weaver, AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Coastal-Alpine-Core, coastal-alpine-stack, Sovereign-Edge-Firmware, fivepanelhat).
+
+- Full terms: [LICENSE](./LICENSE)
+- No open-source grant is implied by access to this repository
+- Commercial use requires a written agreement with Coastal Alpine Tech Limited
 
 ---
 
