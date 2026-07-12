@@ -94,7 +94,8 @@ class AgentOrchestrator:
             return result
         except Exception:
             # Diamond: log the full error server-side, return a sanitized status.
-            # Never leak internal exception details (or tenant data) to callers.
+            # Tenant ID is not sensitive data and helps callers correlate errors;
+            # exception details and stack traces never leak.
             logger.exception(
                 "orchestrator_process_message failed for tenant %s", self.tenant_id
             )
