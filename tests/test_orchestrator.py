@@ -95,6 +95,24 @@ def test_graph_keyword_escalation_without_llm():
     assert out.get("classification") == "escalation"
 
 
+def test_process_message_sanitizes_internal_errors():
+    # A failing agent must not leak internal exception details to the caller.
+    from orchestrator import AgentOrchestrator  # noqa: E402
+
+    class ExplodingAgent:
+        def process_interaction(self, message):
+            raise RuntimeError("secret internal db dsn postgres://user:pw@host/db")
+
+    orch = AgentOrchestrator(tenant_id="tenant-x", use_graph=False)
+    orch.intake_agent = ExplodingAgent()
+
+    result = orch.process_message({"content": "hello"})
+    assert result == {"status": "error", "tenant_id": "tenant-x"}
+    # No internal detail leaked anywhere in the response payload.
+    assert "postgres" not in str(result)
+    assert "RuntimeError" not in str(result)
+
+
 def test_kb_retrieval_tenant_isolation():
     emb = HashEmbeddingService()
     kb = InMemoryKnowledgeBaseClient(emb)

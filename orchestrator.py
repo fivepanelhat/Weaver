@@ -92,6 +92,13 @@ class AgentOrchestrator:
             else:
                 result = self.intake_agent.process_interaction(message)
             return result
+        except Exception:
+            # Diamond: log the full error server-side, return a sanitized status.
+            # Never leak internal exception details (or tenant data) to callers.
+            logger.exception(
+                "orchestrator_process_message failed for tenant %s", self.tenant_id
+            )
+            return {"status": "error", "tenant_id": self.tenant_id}
         finally:
             TelemetryTracker.complete_measurement(
                 measurement, include_system_metrics=True

@@ -7,6 +7,10 @@ on:
     tags:
       - 'v*'
 
+# Least-privilege default (Diamond standard); jobs elevate only what they need.
+permissions:
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
