@@ -8,6 +8,28 @@ This document details the system design, relational schemas, and agent routing s
 
 Weaver is designed to provide secure, offline multi-tenant document retrieval and query routing. The entire engine runs locally at the edge (Taranaki HQ/remote job-sites) on Raspberry Pi or local server clusters, communicating with a local Ollama SLM.
 
+**Hybrid stack:** Weaver depends on **Coastal-Alpine-Core** (SecurityGuard, Telemetry, SovereignOllamaClient, flywheel hooks), pairs with **Aether** for sovereign development / HITL / computer use, and ships inside **coastal-alpine-stack**.
+
+**Dual-platform hosts:** develop on **Windows 10/11** or **Linux**; deploy production workloads on **RPi 5 16GB + Hailo-10H** (or Linux edge servers). Installers: `install.sh`, `install.ps1`, `bootstrap.py`.
+
+```mermaid
+%%{init: { "theme": "dark", "flowchart": { "curve": "basis", "useMaxWidth": true } }}%%
+flowchart TB
+    U[User request] --> O[Orchestrator weaver_graph]
+    O --> I[Intake]
+    O --> F[Fulfilment]
+    O --> R[Resolution]
+    I & F & R --> KB[Tenant knowledge base]
+    KB --> C[Coastal-Alpine-Core guards + Ollama client]
+    C --> LLM[Local Ollama]
+    subgraph HOSTS[Hosts]
+        W[Windows install.ps1]
+        L[Linux install.sh]
+        P[RPi 5 edge]
+    end
+    O -.-> HOSTS
+```
+
 ```text
 ┌─────────────────────────────────────────────────────┐
 │                   User Request                      │
@@ -16,7 +38,7 @@ Weaver is designed to provide secure, offline multi-tenant document retrieval an
                         ▼
                ┌─────────────────┐
                │  Orchestrator   │
-               │  (weaver_graph)    │
+               │  (weaver_graph) │
                └────────┬────────┘
                         │
          ┌──────────────┼──────────────┐

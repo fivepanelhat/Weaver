@@ -55,38 +55,18 @@ Additional challenges addressed:
 
 ### Installation & Setup
 
-We provide separate guides for system environment setup and installation for Windows and Linux users:
+Weaver is **Windows + Linux** (and macOS) ready. Edge production target remains **RPi 5 16GB + Hailo-10H**. Hybridised with **Coastal-Alpine-Core**, **Aether** (companion skills / HITL), and **coastal-alpine-stack**.
 
-* **Prerequisites & System Setup Guide**: Read [setup.md](setup.md)
-* **Installation Guide**: Read [installation.md](installation.md)
+* **Prerequisites**: [setup.md](setup.md)
+* **Full install guide**: [installation.md](installation.md)
 
-### Quick Start (Automated Setup)
-The fastest way to install is running the cross-platform bootstrap script:
-
-```bash
-python bootstrap.py
-```
-
-Weaver
-python bootstrap.py
-```
-
-### Manual Installation
+### One-line install (recommended)
 
 <details open>
-<summary><strong>🐧 Linux / macOS (Bash)</strong></summary>
+<summary><strong>🐧 Linux / macOS</strong></summary>
 
 ```bash
-git clone https://github.com/fivepanelhat/weaver.git
-cd weaver
-
-python3 -m venv venv
-source venv/bin/activate
-
-pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
-cp .env.example .env
+curl -fsSL https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.sh | bash
 ```
 
 </details>
@@ -95,19 +75,67 @@ cp .env.example .env
 <summary><strong>🪟 Windows (PowerShell)</strong></summary>
 
 ```powershell
-git clone https://github.com/fivepanelhat/weaver.git
-cd weaver
+irm https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.ps1 | iex
+```
+
+> **Note:** If script execution is blocked: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+</details>
+
+### Cross-platform bootstrap (from a clone)
+
+```bash
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+python bootstrap.py          # Linux / macOS / Windows — creates venv, installs Core + deps
+```
+
+### Manual Installation
+
+<details open>
+<summary><strong>🐧 Linux / macOS (Bash)</strong></summary>
+
+```bash
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -U pip
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+cp .env.example .env
+```
+
+**System packages (Debian/Ubuntu/RPi OS):**
+
+```bash
+sudo apt-get update
+sudo apt-get install -y python3-dev python3-venv python3-pip git build-essential
+```
+
+</details>
+
+<details>
+<summary><strong>🪟 Windows (PowerShell)</strong></summary>
+
+```powershell
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
 
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 
-pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
+python -m pip install -U pip
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 Copy-Item .env.example .env
 ```
 
-> **Note:** If you receive an execution policy error, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first.
+**Prerequisites:** [Python 3.10+](https://www.python.org/downloads/) with “Add Python to PATH”, [Git for Windows](https://git-scm.com/).
 
 </details>
 
@@ -138,7 +166,7 @@ Weaver routes multi-tenant requests entirely on the edge node: **RPi 5 16GB + Ha
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "fontSize": "16px",
+    "fontSize": "15px",
     "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
     "primaryColor": "#0ea5e9",
     "primaryTextColor": "#f8fafc",
@@ -151,22 +179,23 @@ Weaver routes multi-tenant requests entirely on the edge node: **RPi 5 16GB + Ha
     "titleColor": "#e2e8f0"
   },
   "flowchart": {
-    "nodeSpacing": 40,
-    "rankSpacing": 48,
-    "padding": 20,
+    "nodeSpacing": 36,
+    "rankSpacing": 44,
+    "padding": 18,
     "htmlLabels": true,
-    "curve": "basis"
+    "curve": "basis",
+    "useMaxWidth": true
   }
 }}%%
 flowchart TB
 
-    classDef sense fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
-    classDef edge fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
-    classDef core fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
     classDef act fill:#422006,stroke:#fbbf24,stroke-width:2px,color:#fffbeb
+    classDef core fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
     classDef store fill:#1e1b4b,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
     classDef ai fill:#3b0764,stroke:#e879f9,stroke-width:2px,color:#fdf4ff
-    classDef app fill:#1e1b4b,stroke:#c4b5fd,stroke-width:2px,color:#eef2ff
+    classDef sdk fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
+    classDef host fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
+    classDef companion fill:#312e81,stroke:#c4b5fd,stroke-width:2px,color:#eef2ff
 
     U["User / operator query"] --> ORCH["LangGraph orchestrator"]
     ORCH --> IN["Intake agent<br/>auth · tenant scope"]
@@ -178,17 +207,31 @@ flowchart TB
     LLM --> ORCH
     ORCH --> OUT["Actions & responses"]
 
-    subgraph EDGE["Sovereign edge — RPi 5 16GB + Hailo-10H"]
-        ORCH
-        KB
-        STORE
-        LLM
+    subgraph HYBRID["Hybrid stack integration"]
+        CAC["Coastal-Alpine-Core<br/>SecurityGuard · Telemetry · Flywheel"]
+        AETH["Aether companion<br/>skills · HITL · computer use"]
+        CAS["coastal-alpine-stack<br/>compose / K3s"]
     end
+
+    subgraph HOSTS["Dual-platform hosts"]
+        WIN["Windows 10/11<br/>install.ps1 · bootstrap.py"]
+        LIN["Linux / RPi OS<br/>install.sh · bootstrap.py"]
+        RPI["RPi 5 16GB + Hailo-10H<br/>production edge"]
+    end
+
+    ORCH --> CAC
+    CAC --> LLM
+    AETH -.->|dev / remediate| ORCH
+    CAS -.-> ORCH
+    ORCH -.-> HOSTS
 
     class U,OUT act
     class ORCH,IN,FU,RE core
     class KB,STORE store
     class LLM ai
+    class CAC,CAS sdk
+    class AETH companion
+    class WIN,LIN,RPI host
 ```
 
 | Layer | Components | Role |
@@ -197,7 +240,9 @@ flowchart TB
 | **Agents** | Intake · Fulfilment · Resolution | Tenant-scoped task handling |
 | **Knowledge** | Isolated vector + SQL | No cross-tenant leakage |
 | **Inference** | Ollama on-device | Offline-capable responses |
-| **Hardware** | RPi 5 16GB + Hailo-10H | Canonical Coastal Alpine target |
+| **SDK hybrid** | Coastal-Alpine-Core | Guards, telemetry, flywheel on every path |
+| **Companion** | Aether | Dev orchestration, HITL, computer use |
+| **Hosts** | Windows · Linux · RPi 5 | Same code; dual installers + bootstrap.py |
 
 *Full detail: [ARCHITECTURE.md](./ARCHITECTURE.md)*
 
@@ -293,6 +338,8 @@ Status badges for this repository (CI, security, license, and stack metadata):
 
 [![License](https://img.shields.io/badge/License-Proprietary--Commercial-blue?style=flat-square)](LICENSE)  
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square)](https://www.python.org/)  
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20RPi-0078D6?style=flat-square)]()  
+[![Install](https://img.shields.io/badge/Install-install.sh%20%7C%20install.ps1%20%7C%20bootstrap.py-0ea5e9?style=flat-square)]()  
 [![Hardware Target](https://img.shields.io/badge/Hardware-Raspberry%20Pi%205%2016GB-C11A5B?style=flat-square&logo=raspberry-pi&logoColor=white)]()  
 [![NPU Acceleration](https://img.shields.io/badge/NPU-Hailo--10H%20Accelerated-005A9C?style=flat-square)]()  
 [![Sovereignty](https://img.shields.io/badge/Sovereignty-NZ%20Data%20Bound-00247D?style=flat-square)]()  
