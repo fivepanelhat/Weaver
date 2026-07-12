@@ -39,7 +39,7 @@ PORTALS = [
 ]
 
 CORE_PACKAGE = "coastal_alpine_core"
-CORE_GIT_URL = "https://github.com/fivepanelhat/Coastal-Alpine-Core.git"
+CORE_GIT_URL = "https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────

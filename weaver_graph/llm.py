@@ -7,11 +7,27 @@ import logging
 import os
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
+
 logger = logging.getLogger("weaver.llm")
 
 # Stack-standard default for RPi 5 16GB edge nodes
 DEFAULT_MODEL = os.getenv("WEAVER_LLM_MODEL", "gemma4:e4b")
 DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
+_ALLOWED_SCHEMES = frozenset({"http", "https"})
+
+
+def _validate_ollama_base_url(base_url: str) -> str:
+    """Ensure Ollama base URL uses only http(s) before any urllib open (Bandit B310)."""
+    cleaned = (base_url or "").strip().rstrip("/")
+    parsed = urlparse(cleaned)
+    if parsed.scheme not in _ALLOWED_SCHEMES:
+        raise ValueError(
+            f"Unsupported Ollama URL scheme {parsed.scheme!r}; only http/https allowed"
+        )
+    if not parsed.netloc:
+        raise ValueError("Ollama base URL must include a host")
+    return cleaned
 
 
 class LocalSovereignLLM:
@@ -24,7 +40,7 @@ class LocalSovereignLLM:
         timeout: int = 60,
     ):
         self.model = model
-        self.base_url = base_url.rstrip("/")
+        self.base_url = _validate_ollama_base_url(base_url)
         self.timeout = timeout
         self._core_client = None
         self._init_core_client()
@@ -61,6 +77,9 @@ class LocalSovereignLLM:
         return self._fallback(prompt)
 
     def _ollama_generate(self, prompt: str) -> str:
+        # Re-validate at call time so base_url cannot be swapped to file:/ etc.
+        base = _validate_ollama_base_url(self.base_url)
+        url = f"{base}/api/generate"
         payload = {
             "model": self.model,
             "prompt": prompt,
@@ -69,12 +88,13 @@ class LocalSovereignLLM:
         }
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
-            f"{self.base_url}/api/generate",
+            url,
             data=data,
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+        # Scheme already enforced to http/https by _validate_ollama_base_url
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:  # nosec B310
             body = json.loads(resp.read().decode("utf-8"))
         text = body.get("response") or body.get("message", {}).get("content", "")
         if not text:
