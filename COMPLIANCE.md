@@ -1,31 +1,84 @@
-# Weaver Compliance & Regulatory Framework Guide
+# Compliance — NZ AI + SOC 2 Type II
 
-This guide outlines how the **Weaver** multi-tenant agentic helpdesk engine complies with New Zealand legislation and customary data rights in on-premise and edge configurations.
-
----
-
-## 1. Privacy Act 2020 & Information Privacy Principles (IPPs)
-
-Weaver processes user tickets, support chats, and enterprise files. It enforces the Privacy Act 2020 requirements directly at the database and application layer:
-
-* **IPP 1 (Purpose of collection) & IPP 2 (Source of personal information):** Scopes customer intake parameters. Ticket context is processed locally via LangGraph to determine appropriate routing without publishing records to cloud engines.
-* **IPP 5 (Storage & Security):** Ensures strict tenant partitioning. Multi-tenant database entries use SQLAlchemy tenant scope checks (`coastal_alpine_core.security.tenant_isolated_query`), keeping customer records isolated.
-* **IPP 6 (Access) & IPP 7 (Correction):** Database models support programmatic extraction of all customer interaction logs and vector embeddings linked to a tenant ID for audit exports.
-* **IPP 11 (Limits on disclosure):** Because Weaver runs 100% offline on local hardware, customer communications are immune to inadvertent cloud security disclosures or unauthorized web scraping.
+This repository is governed by the **NZ AI Compliance + SOC 2 Type II** framework.  
+**Classification:** Diamond (primary) | Platinum (secondary) | Gold (tertiary)  
+**HITL Gate:** Required for all compliance decisions + data sovereignty matters
 
 ---
 
-## 2. Public Records Act 2005
+## Purpose
 
-For New Zealand public sector organisations, local councils, and public services utilising Weaver:
-* **Record Integrity:** Weaver automatically maintains an immutable, chronological audit trail of all customer interactions in the `interaction_logs` relational table.
-* **Metadata Standardisation:** Interaction records are timestamped and annotated with tenant identifiers, allowing easy integration with council records management archives.
-* **Retain & Dispose:** Storage capacity managers can be scheduled to prune temporary vector stores while safeguarding long-term compliance metadata in standard SQL outputs.
+Weaver is the **orchestration layer** for Coastal Alpine Tech's autonomous GitOps + multi-tenant LLM workflows. It handles:
+- Tenant configuration + isolation
+- LLM agentic processes + security guardrails
+- Error sanitization + sensitive output masking
+- Orchestration of Coastal Alpine Core SDK
+
+**Compliance Impact:** HIGH
+- Processes health data (requires Health Privacy Code compliance)
+- Implements HITL gates (requires audit trail + approval logging)
+- Multi-tenant isolation (requires access control + data segregation)
 
 ---
 
-## 3. Māori Data Sovereignty (Te Mana Raraunga)
+## Compliance Contacts
 
-* **Te Mana o te Raraunga:** Personal information, oral history files, and customary land registry data vectorized for RAG systems represent digital expressions of *whakapapa* and *taonga*.
-* **Local Guardianship:** Weaver is compiled and deployed locally in New Plymouth, Taranaki. By avoiding offshore clouds (such as AWS, GCP, or Azure), iwi trust entities retain custody of their digital records on their own physical *whenua* (land).
-* **Consent Controls:** Tenant configurations allow administrators to restrict RAG vector indexing to certified internal models, ensuring information remains protected under customary authority boundaries.
+| Role | Contact |
+|------|---------|
+| Compliance Officer | [ASSIGN] |
+| Privacy Officer | [ASSIGN] |
+| CISO / Security Lead | [ASSIGN] |
+| Cultural Advisor | [ASSIGN] |
+
+---
+
+## Data Inventory
+
+| Data Type | Sensitivity | Retention | Protection |
+|-----------|-------------|-----------|------------|
+| Tenant configuration | Level 2 | Until deletion | Encryption + RBAC |
+| Health-related LLM inputs | Level 3 | Per policy | Encryption + audit log |
+| Appointment/care data | Level 3 | 7 years max | Encryption + access control |
+| API logs + error messages | Level 2 | 18 months | Immutable, centralized |
+
+---
+
+## Compliance Status (Track Progress)
+
+- [ ] Phase 1: Governance established (Week 1)
+- [ ] Phase 2: Technical controls hardened (Week 4)
+- [ ] Phase 3: Privacy Act compliance (Week 4)
+- [ ] Phase 4: Te Mana Raraunga implementation (Week 6)
+- [ ] Phase 5: Incident response tested (Week 8)
+- [ ] Phase 6: SOC 2 audit ready (Week 12)
+
+---
+
+## Incident Reporting
+
+**Email:** privacy@coastalalp.tech  
+**Slack:** #compliance  
+**Phone:** [On-call number]
+
+**SLA:** P0 (15 min), P1 (1 hour), P2 (4 hours), P3 (1 day)
+
+---
+
+## Monthly Compliance Checklist
+
+- [ ] Audit logs reviewed (no suspicious patterns)
+- [ ] Incident register updated
+- [ ] Backup restore test passed
+- [ ] No unresolved P0/P1 alerts
+- [ ] Third-party DPAs current
+- [ ] Tenant isolation verified
+- [ ] HITL audit trail complete
+- [ ] Error messages sanitized
+- [ ] Health data encrypted
+
+**Sign-Off:** Compliance Officer: _________________ Date: _________
+
+---
+
+**Related:** [NZ AI Compliance Skill](./.github/compliance/nz-ai-compliance-soc2/)  
+**Last Updated:** 2026-07-12
