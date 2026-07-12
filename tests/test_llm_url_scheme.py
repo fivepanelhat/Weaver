@@ -1,6 +1,14 @@
 """Unit tests for Ollama URL scheme hardening (Bandit B310 / SecOps)."""
+
+import os
+import sys
+
 import pytest
-from weaver_graph.llm import _validate_ollama_base_url, LocalSovereignLLM
+
+# Ensure repo root is importable (matches other Weaver tests / CI without pip -e .)
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from weaver_graph.llm import LocalSovereignLLM, _validate_ollama_base_url  # noqa: E402
 
 
 def test_validate_allows_http_https():
