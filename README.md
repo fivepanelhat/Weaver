@@ -103,7 +103,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 pip install -U pip
-pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5"
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 cp .env.example .env
@@ -129,7 +129,7 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 
 python -m pip install -U pip
-pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5"
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 Copy-Item .env.example .env
