@@ -4,7 +4,7 @@
   <img src="assets/social_preview.png" alt="Weaver — Coastal Alpine Tech liquid glass banner" width="100%" />
 </p>
 
-**Coastal Alpine Tech Limited**  
+**Coastal Alpine Tech Limited** — pre-seed startup, New Plymouth, Taranaki, Aotearoa New Zealand.
 *Edge AI | Sovereign Systems | Practical Intelligence*
 
 **License: Proprietary — Coastal Alpine Tech Limited** · See [LICENSE](./LICENSE) (same Coastal Alpine proprietary terms as AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Core, and the rest of the edge stack).
@@ -15,11 +15,11 @@ White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval 
 
 ## The 5 Ws: Project Context
 
-- **Who:** Built by Coastal Alpine Tech Limited, designed for high-stakes Kiwi industries (civil construction, agritech, etc.).
+- **Who:** Built by Coastal Alpine Tech Limited (pre-seed), designed for high-stakes Kiwi industries (civil construction, agritech, etc.).
 - **What:** A decentralized LangGraph orchestration layer that safely directs multi-agent tasks and handles local document vectorization.
 - **Where:** Engineered at HQ in New Plymouth, Taranaki. Deployable strictly at the edge.
 - **When:** Active development as of June 2026.
-- **Why:** To guarantee data sovereignty by keeping tenant operational data local and strictly partitioned.
+- **Why:** To support data sovereignty by keeping tenant operational data local and strictly partitioned.
 
 ---
 
@@ -155,6 +155,8 @@ pytest
 ---
 
 ## Architecture Overview
+
+> **Diagrams:** Architecture images and Mermaid maps describe the **target product architecture** for this pre-seed stack. They are engineering design maps — not claims of large-scale commercial fleet deployment.
 
 Weaver routes multi-tenant requests entirely on the edge node: **RPi 5 16GB + Hailo-10H**, local Ollama, and tenant-isolated stores. No tenant data leaves the deployment site.
 
