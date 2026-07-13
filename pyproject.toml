@@ -21,7 +21,7 @@ dependencies = [
     "langgraph>=1.0.10",
     "langsmith>=0.8.18",
     "pydantic-settings>=2.14.2",
-    "paho-mqtt>=1.6.1",
+    "paho-mqtt>=2.1.0",
     "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5",
 ]
 
