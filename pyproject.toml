@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "weaver"
-dynamic = ["version"]
+version = "0.1.0"
 authors = [
   { name="Wayne Roberts", email="architecture@coastalalpinetech.local" },
 ]
@@ -43,7 +43,6 @@ include = [
     "knowledge_base*",
     "database*",
     "models*",
-    "src*",
 ]
 
 [tool.ruff]

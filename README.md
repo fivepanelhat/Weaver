@@ -250,19 +250,26 @@ flowchart TB
 
 ```bash
 Weaver/
-├── agent_knowledge_base/      # Policy, ethics, and platform runbooks
+├── agent_knowledge_base/      # Policy, ethics, and platform runbooks (Markdown)
 ├── weaver_graph/              # Edge-friendly state graph (does not shadow PyPI langgraph)
 │   ├── graph.py               # StateGraph compiler
-│   ├── llm.py                 # Local Ollama client bridge
-│   └── orchestrator.py        # Graph processing nodes
-├── tests/                     # Automated testing suite
-│   └── test_orchestrator.py   # StateGraph smoke tests
+│   ├── llm.py                 # Local Ollama client bridge (LocalSovereignLLM)
+│   ├── orchestrator.py        # build_agnostic_helpdesk graph nodes
+│   ├── embeddings.py          # Embedding helpers
+│   └── ingestion.py           # Document ingestion
+├── orchestrator.py            # AgentOrchestrator — unified entrypoint (agent + graph paths)
+├── agents.py                  # Intake / Fulfilment / Resolution agents
+├── knowledge_base.py          # Tenant-isolated KB clients (in-memory + SQLAlchemy)
+├── database.py                # TenantAwareDB connection utilities
+├── models.py                  # SQLAlchemy relational & vector schemas
+├── demo.py                    # Local simulation runner (offline-capable)
+├── bootstrap.py               # Cross-platform venv + dependency bootstrap
+├── tests/                     # pytest suite (orchestrator, LLM URL, demo smoke)
+├── tests_security_stress/     # Adversarial / red-team suite (prompt attacks)
 ├── .env.example
 ├── requirements.txt
 ├── requirements-dev.txt
-├── demo.py                    # Local simulation runner
-├── database.py                # Database connection utilities
-├── models.py                  # SQLAlchemy relational & vector schemas
+├── Dockerfile
 ├── ARCHITECTURE.md            # System design details
 └── README.md                  # This file
 ```
@@ -282,25 +289,34 @@ Weaver/
 
 ---
 
-## Real-World Examples and Implementation
+## Target Deployment Scenarios
 
-- **Civil Construction Helpdesk**: Deployed on-premise at a New Zealand construction firm to route project compliance queries across multiple subcontractors while   maintaining strict data isolation per client.
-- **Agritech Support Platform**: Used by cooperatives in Horowhenua to provide localized advisory services without exposing farm data to third-party clouds.
-- **White-Label Service Providers**: Integrated into existing SaaS platforms where clients demand sovereign data handling.
+> These are the use cases Weaver is **designed for**. Weaver is at an early
+> release (v0.1.0) and these are illustrative target scenarios, not claims of
+> existing production deployments.
+
+- **Civil Construction Helpdesk**: Route project-compliance queries across multiple subcontractors on-premise, keeping each client's data strictly isolated.
+- **Agritech Support Platform**: Provide localized advisory services to cooperatives without exposing farm data to third-party clouds.
+- **White-Label Service Providers**: Embed into existing SaaS platforms whose clients require sovereign, on-site data handling.
 
 **Implementation Notes:**
 - Install on a dedicated edge server or Raspberry Pi cluster.
 - Configure tenant IDs at database and vector store level for isolation.
 - Use systemd services for persistent operation and monitor via local dashboards.
-- Start with the `demo.py` to validate routing and isolation before production scaling.
+- Start with `demo.py` to validate routing and isolation before production scaling.
 
 ---
 
-## Performance & Benchmarks
+## Performance Targets
 
-* **Local Inference Latency:** ~1.10 seconds per routing decision executing Gemma 4 E4B via Ollama.
-* **Energy Consumption:** Average active power draw is ~6.2W running on a headless Raspberry Pi 5 16GB node.
-* **Storage Footprint:** SQL and vectorized SQLite databases consume <200MB, leaving ample space on edge SD cards.
+> Preliminary, illustrative figures measured informally on the reference edge
+> node (RPi 5 16GB + Hailo-10H, Gemma 4 E4B via Ollama). Not audited
+> production benchmarks — treat as ballpark expectations and re-measure for
+> your own workload and hardware.
+
+* **Routing latency:** on the order of ~1 second per routing decision.
+* **Active power draw:** roughly ~6W on a headless Raspberry Pi 5 16GB node.
+* **Storage footprint:** SQL + vector stores well under 200MB for small tenants.
 
 ---
 
@@ -328,7 +344,7 @@ Questions or collaboration? Contact Coastal Alpine Tech Limited.
 
 ---
 
-*Last updated: June 2026*
+*Last updated: July 2026 · First public release: v0.1.0*
 
 ---
 
