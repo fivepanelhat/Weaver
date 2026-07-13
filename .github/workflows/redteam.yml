@@ -26,11 +26,14 @@ jobs:
         # Replaces the previous job, which apt-installed a package that no
         # longer exists on ubuntu-latest (zaproxy) and pointed ZAP at
         # https://example.com — a third-party site we must not scan.
+        # The suite drives AgentOrchestrator -> Coastal-Alpine-Core
+        # SecurityGuard, so the runtime deps (incl. Core) must be installed.
         run: |
           if compgen -G "tests_security_stress/test_*.py" > /dev/null; then
             python -m pip install --upgrade pip
             pip install pytest requests
             if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             python -m pytest tests_security_stress/ -v --tb=short
           else
             echo "No local adversarial suite in this repo — nothing to run."

@@ -73,8 +73,15 @@ class AgentOrchestrator:
         return self._graph
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        # Security gate first — never run agents on unsafe prompts
-        sec_result = self.security_guard.check_prompt(str(message))
+        # Security gate first — never run agents on unsafe prompts.
+        # Guard the actual user-supplied text, not str(message): the dict
+        # repr escapes unicode, so a zero-width char used to obfuscate an
+        # injection becomes a literal backslash-u200b and slips past the
+        # guard's normalization. Check the raw content field instead.
+        user_text = message.get("content") or message.get("user_message") or ""
+        if not isinstance(user_text, str):
+            user_text = str(user_text)
+        sec_result = self.security_guard.check_prompt(user_text)
         if not sec_result.is_safe:
             return {"status": "blocked", "tenant_id": self.tenant_id}
 
