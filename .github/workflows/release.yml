@@ -19,10 +19,16 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+      # Uses the built-in gh CLI rather than a third-party action: this repo's
+      # Actions allow-list policy ("selected") startup-fails unverified
+      # actions such as softprops/action-gh-release.
       - name: Create Draft Release
-        uses: softprops/action-gh-release@v2.2.1
-        with:
-          draft: true
-          prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --title "$TAG" \
+            --generate-notes
