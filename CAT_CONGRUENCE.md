@@ -22,7 +22,7 @@ This repository is part of the **Kiwi Edge AI Stack** - hybrid edge (RPi 5 16GB 
 | Edge orchestration | Weaver |
 | Shared SDK | Coastal-Alpine-Core, coastal-alpine-stack |
 | Field | Sovereign-Edge-Firmware |
-| Domains | Blue-Moon-Portal, SoilGuard-Portal, AquaGuard-Portal, Sting-Operation-AI |
+| Domains | **Byte Size Kai** (Blue-Moon-Portal), SoilGuard-Portal, AquaGuard-Portal, Sting-Operation-AI |
 | Whanau / social | whanau-preterm-support-hub, Front_Line_Whanau |
 | Privacy util | CAT-mail |
 
