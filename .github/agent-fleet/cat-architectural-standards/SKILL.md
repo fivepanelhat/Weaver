@@ -22,14 +22,14 @@ tags:
 
 # CAT Architectural Standards (portfolio)
 
-## Gold — workflow-native
+## Gold - workflow-native
 Map to real operator lifecycle (founder, farmer, mentor, clinician-path with HITL). Prefer checklists and deterministic tools.
 
-## Diamond — foundation
+## Diamond - foundation
 CI, security scanning, secret refusal, licence clarity, privacy, HITL gates, sandboxing.
 
-## Platinum — intelligence
-Memory, feedback loops, evals, freshness of knowledge, cost/telemetry — without removing Diamond ceilings.
+## Platinum - intelligence
+Memory, feedback loops, evals, freshness of knowledge, cost/telemetry - without removing Diamond ceilings.
 
 ## Rule
-Never trade Diamond safety for Platinum “autonomy” demos.
+Never trade Diamond safety for Platinum "autonomy" demos.

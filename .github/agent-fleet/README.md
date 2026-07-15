@@ -13,3 +13,5 @@ Portable **Coastal Alpine Tech** agent policy for every public repo.
 **Org architecture map:** [fivepanelhat](https://github.com/fivepanelhat/fivepanelhat)
 
 Install skills into Claude/Aether paths by copying this directory, or clone NZ-Start-Up and run `nz-startup install-skills`.
+
+**Encoding:** UTF-8 without BOM. Prefer ASCII punctuation (`|`, `-`) so GitHub and terminals render consistently.
