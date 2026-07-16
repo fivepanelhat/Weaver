@@ -2,7 +2,7 @@
 
 ## White-Label AI Helpdesk: Data Foundation
 
-**Date:** 23 May 2026 
+**Date:** 23 May 2026  
 **Contributor:** Wayne Roberts, Coastal Alpine Tech Limited
 
 This document defines the hierarchical database schema for the white-label AI helpdesk platform. The architecture uses a hybrid approach: PostgreSQL for relational business logic and configuration, and a vector database (Milvus or PostgreSQL `pgvector`) for semantic RAG embeddings. This design ensures strict data isolation across multiple tenant businesses while maintaining a single, agnostic Python codebase.
@@ -67,7 +67,7 @@ Audit trail of all customer interactions for compliance, analytics, and debuggin
 | `tenant_id` | UUID (Foreign Key) | Which business this interaction belongs to. |
 | `customer_id` | VARCHAR | Identifier for the end customer (optional). |
 | `input_message` | TEXT | The customer's original query. |
-| `agent_chain` | VARCHAR | Agents involved (e.g., "IntakeAgent -> FulfilmentAgent"). |
+| `agent_chain` | VARCHAR | Agents involved (e.g., "IntakeAgent → FulfilmentAgent"). |
 | `output_message` | TEXT | The AI-generated response. |
 | `escalated` | BOOLEAN | Whether the interaction was handed to a human. |
 | `timestamp` | TIMESTAMP | When the interaction occurred. |
@@ -112,39 +112,39 @@ This ensures that even if an attacker can trigger a vector search, they cannot r
 When a customer sends a message through the helpdesk widget:
 
 1. **Authentication & Tenant Resolution**
- - Chat widget sends request with `tenant_id` (or derived from API key).
- - Backend validates the `tenant_id` and establishes the tenant context.
+   - Chat widget sends request with `tenant_id` (or derived from API key).
+   - Backend validates the `tenant_id` and establishes the tenant context.
 
 2. **Configuration Retrieval**
- - Backend queries PostgreSQL: `SELECT * FROM tenant_configs WHERE tenant_id = current_tenant_id`.
- - System loads `brand_voice`, `escalation_rules`, `active_channels`.
+   - Backend queries PostgreSQL: `SELECT * FROM tenant_configs WHERE tenant_id = current_tenant_id`.
+   - System loads `brand_voice`, `escalation_rules`, `active_channels`.
 
 3. **Intake & Vector Search**
- - `IntakeAgent` receives the customer's message.
- - Message is embedded using the same model as `knowledge_embeddings`.
- - Semantic search is triggered: `SELECT FROM knowledge_embeddings WHERE tenant_id = current_tenant_id ORDER BY similarity LIMIT 5`.
- - Retrieved chunks are ranked and passed to the LLM context.
+   - `IntakeAgent` receives the customer's message.
+   - Message is embedded using the same model as `knowledge_embeddings`.
+   - Semantic search is triggered: `SELECT FROM knowledge_embeddings WHERE tenant_id = current_tenant_id ORDER BY similarity LIMIT 5`.
+   - Retrieved chunks are ranked and passed to the LLM context.
 
 4. **Prompt Assembly**
- - System concatenates: *(Base System Prompt) + (Tenant Config Brand Voice) + (Escalation Rules) + (Retrieved RAG Context)*.
- - Example:
- ```
- You are a helpful customer support agent for {company_name}.
- Brand voice: {brand_voice}
- Escalation threshold: {escalation_rules.anger_level}
- Relevant company knowledge:
- {retrieved_knowledge_chunks}
- Customer message: {input_message}
- ```
+   - System concatenates: *(Base System Prompt) + (Tenant Config Brand Voice) + (Escalation Rules) + (Retrieved RAG Context)*.
+   - Example:
+     ```
+     You are a helpful customer support agent for {company_name}.
+     Brand voice: {brand_voice}
+     Escalation threshold: {escalation_rules.anger_level}
+     Relevant company knowledge:
+     {retrieved_knowledge_chunks}
+     Customer message: {input_message}
+     ```
 
 5. **LLM Execution & Response**
- - LLM generates response strictly within the constraints and knowledge of that tenant.
- - Response is validated against escalation rules.
- - If escalation needed, message is logged to `interaction_logs` with `escalated = true`.
+   - LLM generates response strictly within the constraints and knowledge of that tenant.
+   - Response is validated against escalation rules.
+   - If escalation needed, message is logged to `interaction_logs` with `escalated = true`.
 
 6. **Audit & Storage**
- - Entire interaction is logged in `interaction_logs` for compliance and analytics.
- - Metrics are updated (token usage, response time, customer satisfaction).
+   - Entire interaction is logged in `interaction_logs` for compliance and analytics.
+   - Metrics are updated (token usage, response time, customer satisfaction).
 
 ---
 

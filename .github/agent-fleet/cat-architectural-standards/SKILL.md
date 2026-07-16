@@ -6,18 +6,18 @@ type: workflow
 requires_hitl: false
 cultural_sensitivity: low
 description: >
- Map work to Coastal Alpine Tech Gold (workflow), Diamond (foundation/security),
- and Platinum (intelligence/flywheel) tiers for portfolio repos.
+  Map work to Coastal Alpine Tech Gold (workflow), Diamond (foundation/security),
+  and Platinum (intelligence/flywheel) tiers for portfolio repos.
 metadata:
- status: active
- owner: Coastal Alpine Tech
- last_updated: "2026-07-15"
+  status: active
+  owner: Coastal Alpine Tech
+  last_updated: "2026-07-15"
 tags:
- - standards
- - architecture
- - gold
- - diamond
- - platinum
+  - standards
+  - architecture
+  - gold
+  - diamond
+  - platinum
 ---
 
 # CAT Architectural Standards (portfolio)

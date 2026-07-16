@@ -1,4 +1,4 @@
-# Platinum Standard - Platform Runbook (summary)
+# Platinum Standard — Platform Runbook (summary)
 
 ## Purpose
 - Operational runbook for platform owners implementing the Platinum Standard OS, including agentic components.
