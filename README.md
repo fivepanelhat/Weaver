@@ -16,6 +16,40 @@
 Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.github/agent-fleet/anti-hallucination.md) | Congruence: [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md)
 <!-- END CAT_CONGRUENCE_SNIPPET -->
 
+<!-- BEGIN PROBLEMS_SOLUTIONS_ECONOMY -->
+## Problems we are solving
+
+**Weaver** is the multi-tenant edge orchestration and local RAG mesh for high-stakes Kiwi operations helpdesks.
+
+1. **Data leakage risk** - Sending industrial / farm / client docs to public LLM APIs is unacceptable for many NZ operators.
+2. **Tenant cross-contamination** - Shared SaaS helpdesks mix client knowledge unless isolation is designed in.
+3. **Rigid routing** - Static ticket trees cannot adapt to multi-step operational requests.
+4. **Cloud dependency** - Rural enterprises need local RAG and agent graphs that survive offline windows.
+
+## Solution we have built
+
+| Built capability | What it does |
+| :--- | :--- |
+| **Tenant-aware agents** | Intake / fulfilment / resolution with isolation |
+| **Local LangGraph orchestration** | Adaptive routing on-edge |
+| **Partitioned vector knowledge** | Per-tenant retrieval without cross-bleed |
+| **White-label posture** | Industry-specific deployments on the Kiwi Edge stack |
+
+Pairs with **Aether** (companion skills) and **Core** (edge primitives) under the portfolio map.
+
+### Local (Taranaki) and national (Aotearoa) economic benefits
+
+| Lever | Benefit |
+| :--- | :--- |
+| **Regional R&D HQ** | Product design and IP stay in New Plymouth / Taranaki - not only Auckland/offshore SaaS |
+| **Primary-sector productivity** | On-farm and rural tools aim to cut waste, protect consents, and support export competitiveness |
+| **Skilled employment pathways** | Edge install, field support, agritech ops, software, compliance, and cultural advisory roles as pilots scale |
+| **Data sovereignty** | Te Mana Raraunga-aligned local custody keeps high-value operational data onshore |
+| **HITL jobs quality** | Agents **inform / draft / prepare / monitor / remind**; humans **advise / sign / file / send / pay** - augment people, do not fake full autonomy |
+
+**Stage honesty (pre-seed):** Impact today is founder R&D, near-term contractors, and EDA/partner leverage. Permanent multi-region payroll follows paid pilots and revenue - we do not invent headcount claims.
+<!-- END PROBLEMS_SOLUTIONS_ECONOMY -->
+
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary--Commercial-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](./CHANGELOG.md)
@@ -61,14 +95,6 @@ White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval 
 
 ---
 
-## The Problem We Are Solving
-
-The problem we are solving is ensuring secure, tenant-isolated AI operations in multi-client environments without reliance on external cloud services that risk data leakage or compliance violations.
-
-Additional challenges addressed:
-1. **Data Leakage & Compliance** Sending sensitive industrial data to external LLM providers is unacceptable.
-2. **Tenant Cross-Contamination** Risk of mixing client data in shared systems.
-3. **Rigid Routing** Inability of static helpdesks to adapt intelligently to varied requests.
 
 ---
 
