@@ -12,10 +12,9 @@
 
 > Sovereign hybrid edge AI for NZ farms and founders - local-first + multi-model, Te Mana Raraunga aligned - collaborating with Venture Taranaki, startups.com investors and Kotahitanga Investment Fund (HITL + cultural advisory for formal approaches).
 
-**Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.**  
+**Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.** 
 Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.github/agent-fleet/anti-hallucination.md) | Congruence: [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md)
 <!-- END CAT_CONGRUENCE_SNIPPET -->
-
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary--Commercial-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org)
@@ -40,13 +39,13 @@ Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.gith
 [![Dependencies](https://img.shields.io/badge/Dependencies-Monitored-brightgreen?logo=dependabot)](https://github.com/fivepanelhat/Weaver/security/dependabot)
 
 <p align="center">
-  <img src="assets/social_preview.png" alt="Weaver  Coastal Alpine Tech liquid glass banner" width="100%" />
+ <img src="assets/social_preview.png" alt="Weaver Coastal Alpine Tech liquid glass banner" width="100%" />
 </p>
 
-**Coastal Alpine Tech Limited**  pre-seed startup, New Plymouth, Taranaki, Aotearoa New Zealand.
+**Coastal Alpine Tech Limited** pre-seed startup, New Plymouth, Taranaki, Aotearoa New Zealand.
 *Edge AI | Sovereign Systems | Practical Intelligence*
 
-**License: Proprietary  Coastal Alpine Tech Limited** | See [LICENSE](./LICENSE) (same Coastal Alpine proprietary terms as AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Core, and the rest of the edge stack).
+**License: Proprietary Coastal Alpine Tech Limited** | See [LICENSE](./LICENSE) (same Coastal Alpine proprietary terms as AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Core, and the rest of the edge stack).
 
 White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval and local LangGraph orchestration.
 
@@ -67,9 +66,9 @@ White-label multi-tenant AI helpdesk scaffold with isolated knowledge retrieval 
 The problem we are solving is ensuring secure, tenant-isolated AI operations in multi-client environments without reliance on external cloud services that risk data leakage or compliance violations.
 
 Additional challenges addressed:
-1. **Data Leakage & Compliance**  Sending sensitive industrial data to external LLM providers is unacceptable.
-2. **Tenant Cross-Contamination**  Risk of mixing client data in shared systems.
-3. **Rigid Routing**  Inability of static helpdesks to adapt intelligently to varied requests.
+1. **Data Leakage & Compliance** Sending sensitive industrial data to external LLM providers is unacceptable.
+2. **Tenant Cross-Contamination** Risk of mixing client data in shared systems.
+3. **Rigid Routing** Inability of static helpdesks to adapt intelligently to varied requests.
 
 ---
 
@@ -102,7 +101,7 @@ Weaver is **Windows + Linux** (and macOS) ready. Edge production target remains 
 ### One-line install (recommended)
 
 <details open>
-<summary><strong>ðŸ§ Linux / macOS</strong></summary>
+<summary><strong> Linux / macOS</strong></summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.sh | bash
@@ -111,7 +110,7 @@ curl -fsSL https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.sh
 </details>
 
 <details>
-<summary><strong>ðŸªŸ Windows (PowerShell)</strong></summary>
+<summary><strong> Windows (PowerShell)</strong></summary>
 
 ```powershell
 irm https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.ps1 | iex
@@ -126,13 +125,13 @@ irm https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.ps1 | iex
 ```bash
 git clone https://github.com/fivepanelhat/Weaver.git
 cd Weaver
-python bootstrap.py          # Linux / macOS / Windows  creates venv, installs Core + deps
+python bootstrap.py # Linux / macOS / Windows creates venv, installs Core + deps
 ```
 
 ### Manual Installation
 
 <details open>
-<summary><strong>ðŸ§ Linux / macOS (Bash)</strong></summary>
+<summary><strong> Linux / macOS (Bash)</strong></summary>
 
 ```bash
 git clone https://github.com/fivepanelhat/Weaver.git
@@ -158,7 +157,7 @@ sudo apt-get install -y python3-dev python3-venv python3-pip git build-essential
 </details>
 
 <details>
-<summary><strong>ðŸªŸ Windows (PowerShell)</strong></summary>
+<summary><strong> Windows (PowerShell)</strong></summary>
 
 ```powershell
 git clone https://github.com/fivepanelhat/Weaver.git
@@ -195,84 +194,84 @@ pytest
 
 ## Architecture Overview
 
-> **Diagrams:** Architecture images and Mermaid maps describe the **target product architecture** for this pre-seed stack. They are engineering design maps  not claims of large-scale commercial fleet deployment.
+> **Diagrams:** Architecture images and Mermaid maps describe the **target product architecture** for this pre-seed stack. They are engineering design maps not claims of large-scale commercial fleet deployment.
 
 Weaver routes multi-tenant requests entirely on the edge node: **RPi 5 16GB + Hailo-10H**, local Ollama, and tenant-isolated stores. No tenant data leaves the deployment site.
 
-![Weaver architecture  liquid glass overview](assets/architecture_overview.png)
+![Weaver architecture liquid glass overview](assets/architecture_overview.png)
 
 ### System map
 
 ```mermaid
 %%{init: {
-  "theme": "dark",
-  "themeVariables": {
-    "fontSize": "15px",
-    "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
-    "primaryColor": "#0ea5e9",
-    "primaryTextColor": "#f8fafc",
-    "primaryBorderColor": "#38bdf8",
-    "lineColor": "#67e8f9",
-    "secondaryColor": "#1e293b",
-    "tertiaryColor": "#0f172a",
-    "clusterBkg": "#0b1220cc",
-    "clusterBorder": "#38bdf880",
-    "titleColor": "#e2e8f0"
-  },
-  "flowchart": {
-    "nodeSpacing": 36,
-    "rankSpacing": 44,
-    "padding": 18,
-    "htmlLabels": true,
-    "curve": "basis",
-    "useMaxWidth": true
-  }
+ "theme": "dark",
+ "themeVariables": {
+ "fontSize": "15px",
+ "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+ "primaryColor": "#0ea5e9",
+ "primaryTextColor": "#f8fafc",
+ "primaryBorderColor": "#38bdf8",
+ "lineColor": "#67e8f9",
+ "secondaryColor": "#1e293b",
+ "tertiaryColor": "#0f172a",
+ "clusterBkg": "#0b1220cc",
+ "clusterBorder": "#38bdf880",
+ "titleColor": "#e2e8f0"
+ },
+ "flowchart": {
+ "nodeSpacing": 36,
+ "rankSpacing": 44,
+ "padding": 18,
+ "htmlLabels": true,
+ "curve": "basis",
+ "useMaxWidth": true
+ }
 }}%%
 flowchart TB
 
-    classDef act fill:#422006,stroke:#fbbf24,stroke-width:2px,color:#fffbeb
-    classDef core fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
-    classDef store fill:#1e1b4b,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
-    classDef ai fill:#3b0764,stroke:#e879f9,stroke-width:2px,color:#fdf4ff
-    classDef sdk fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
-    classDef host fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
-    classDef companion fill:#312e81,stroke:#c4b5fd,stroke-width:2px,color:#eef2ff
+ classDef act fill:#422006,stroke:#fbbf24,stroke-width:2px,color:#fffbeb
+ classDef core fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
+ classDef store fill:#1e1b4b,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
+ classDef ai fill:#3b0764,stroke:#e879f9,stroke-width:2px,color:#fdf4ff
+ classDef sdk fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
+ classDef host fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
+ classDef companion fill:#312e81,stroke:#c4b5fd,stroke-width:2px,color:#eef2ff
 
-    U["User / operator query"] --> ORCH["LangGraph orchestrator"]
-    ORCH --> IN["Intake agent<br/>auth | tenant scope"]
-    ORCH --> FU["Fulfilment agent<br/>RAG | tools"]
-    ORCH --> RE["Resolution agent<br/>response | actions"]
-    IN & FU & RE --> KB["Tenant-aware knowledge base"]
-    KB --> STORE["Isolated vector + SQL store"]
-    STORE --> LLM["Local LLM via Ollama<br/>Gemma 4 e4b"]
-    LLM --> ORCH
-    ORCH --> OUT["Actions & responses"]
+ U["User / operator query"] --> ORCH["LangGraph orchestrator"]
+ ORCH --> IN["Intake agent<br/>auth | tenant scope"]
+ ORCH --> FU["Fulfilment agent<br/>RAG | tools"]
+ ORCH --> RE["Resolution agent<br/>response | actions"]
+ IN & FU & RE --> KB["Tenant-aware knowledge base"]
+ KB --> STORE["Isolated vector + SQL store"]
+ STORE --> LLM["Local LLM via Ollama<br/>Gemma 4 e4b"]
+ LLM --> ORCH
+ ORCH --> OUT["Actions & responses"]
 
-    subgraph HYBRID["Hybrid stack integration"]
-        CAC["Coastal-Alpine-Core<br/>SecurityGuard | Telemetry | Flywheel"]
-        AETH["Aether companion<br/>skills | HITL | computer use"]
-        CAS["coastal-alpine-stack<br/>compose / K3s"]
-    end
+ subgraph HYBRID["Hybrid stack integration"]
+ CAC["Coastal-Alpine-Core<br/>SecurityGuard | Telemetry | Flywheel"]
+ AETH["Aether companion<br/>skills | HITL | computer use"]
+ CAS["coastal-alpine-stack<br/>compose / K3s"]
+ end
 
-    subgraph HOSTS["Dual-platform hosts"]
-        WIN["Windows 10/11<br/>install.ps1 | bootstrap.py"]
-        LIN["Linux / RPi OS<br/>install.sh | bootstrap.py"]
-        RPI["RPi 5 16GB + Hailo-10H<br/>production edge"]
-    end
+ subgraph HOSTS["Dual-platform hosts"]
+ WIN["Windows 10/11<br/>install.ps1 | bootstrap.py"]
+ LIN["Linux / RPi OS<br/>install.sh | bootstrap.py"]
+ RPI["RPi 5 16GB + Hailo-10H<br/>production edge"]
+ end
 
-    ORCH --> CAC
-    CAC --> LLM
-    AETH -.-> | dev / remediate | ORCH
-    CAS -.-> ORCH
-    ORCH -.-> HOSTS
+ ORCH --> CAC
+ CAC --> LLM
+ AETH -.-> | dev / remediate | ORCH
+ CAS -.-> ORCH
+ ORCH -.-> HOSTS
 
-    class U,OUT act
-    class ORCH,IN,FU,RE core
-    class KB,STORE store
-    class LLM ai
-    class CAC,CAS sdk
-    class AETH companion
-    class WIN,LIN,RPI host
+ class U,OUT act
+ class ORCH,IN,FU,RE core
+ class KB,STORE store
+ class LLM ai
+ class CAC,CAS sdk
+ class AETH companion
+ class WIN,LIN,RPI host
 ```
 
  | Layer | Components | Role |
@@ -291,28 +290,28 @@ flowchart TB
 
 ```bash
 Weaver/
-â"œâ"€â"€ agent_knowledge_base/      # Policy, ethics, and platform runbooks (Markdown)
-â"œâ"€â"€ weaver_graph/              # Edge-friendly state graph (does not shadow PyPI langgraph)
-â"‚   â"œâ"€â"€ graph.py               # StateGraph compiler
-â"‚   â"œâ"€â"€ llm.py                 # Local Ollama client bridge (LocalSovereignLLM)
-â"‚   â"œâ"€â"€ orchestrator.py        # build_agnostic_helpdesk graph nodes
-â"‚   â"œâ"€â"€ embeddings.py          # Embedding helpers
-â"‚   â""â"€â"€ ingestion.py           # Document ingestion
-â"œâ"€â"€ orchestrator.py            # AgentOrchestrator  unified entrypoint (agent + graph paths)
-â"œâ"€â"€ agents.py                  # Intake / Fulfilment / Resolution agents
-â"œâ"€â"€ knowledge_base.py          # Tenant-isolated KB clients (in-memory + SQLAlchemy)
-â"œâ"€â"€ database.py                # TenantAwareDB connection utilities
-â"œâ"€â"€ models.py                  # SQLAlchemy relational & vector schemas
-â"œâ"€â"€ demo.py                    # Local simulation runner (offline-capable)
-â"œâ"€â"€ bootstrap.py               # Cross-platform venv + dependency bootstrap
-â"œâ"€â"€ tests/                     # pytest suite (orchestrator, LLM URL, demo smoke)
-â"œâ"€â"€ tests_security_stress/     # Adversarial / red-team suite (prompt attacks)
-â"œâ"€â"€ .env.example
-â"œâ"€â"€ requirements.txt
-â"œâ"€â"€ requirements-dev.txt
-â"œâ"€â"€ Dockerfile
-â"œâ"€â"€ ARCHITECTURE.md            # System design details
-â""â"€â"€ README.md                  # This file
+|-- agent_knowledge_base/ # Policy, ethics, and platform runbooks (Markdown)
+|-- weaver_graph/ # Edge-friendly state graph (does not shadow PyPI langgraph)
+| |-- graph.py # StateGraph compiler
+| |-- llm.py # Local Ollama client bridge (LocalSovereignLLM)
+| |-- orchestrator.py # build_agnostic_helpdesk graph nodes
+| |-- embeddings.py # Embedding helpers
+| -- ingestion.py # Document ingestion
+|-- orchestrator.py # AgentOrchestrator unified entrypoint (agent + graph paths)
+|-- agents.py # Intake / Fulfilment / Resolution agents
+|-- knowledge_base.py # Tenant-isolated KB clients (in-memory + SQLAlchemy)
+|-- database.py # TenantAwareDB connection utilities
+|-- models.py # SQLAlchemy relational & vector schemas
+|-- demo.py # Local simulation runner (offline-capable)
+|-- bootstrap.py # Cross-platform venv + dependency bootstrap
+|-- tests/ # pytest suite (orchestrator, LLM URL, demo smoke)
+|-- tests_security_stress/ # Adversarial / red-team suite (prompt attacks)
+|-- .env.example
+|-- requirements.txt
+|-- requirements-dev.txt
+|-- Dockerfile
+|-- ARCHITECTURE.md # System design details
+-- README.md # This file
 ```
 
 ---
@@ -352,7 +351,7 @@ Weaver/
 
 > Preliminary, illustrative figures measured informally on the reference edge
 > node (RPi 5 16GB + Hailo-10H, Gemma 4 E4B via Ollama). Not audited
-> production benchmarks  treat as ballpark expectations and re-measure for
+> production benchmarks treat as ballpark expectations and re-measure for
 > your own workload and hardware.
 
 * **Routing latency:** on the order of ~1 second per routing decision.
@@ -372,7 +371,7 @@ Weaver/
 
 ## License
 
-This project is licensed under the **Coastal Alpine Tech Limited License** (proprietary / commercial)  the same license used across the Kiwi Edge AI Stack (Weaver, AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Coastal-Alpine-Core, coastal-alpine-stack, Sovereign-Edge-Firmware, fivepanelhat).
+This project is licensed under the **Coastal Alpine Tech Limited License** (proprietary / commercial) the same license used across the Kiwi Edge AI Stack (Weaver, AquaGuard, SoilGuard, Blue-Moon, Sting-Operation, Coastal-Alpine-Core, coastal-alpine-stack, Sovereign-Edge-Firmware, fivepanelhat).
 
 - Full terms: [LICENSE](./LICENSE)
 - No open-source grant is implied by access to this repository

@@ -1,4 +1,4 @@
-# Environment & Prerequisites Setup Guide — Weaver
+# Environment & Prerequisites Setup Guide - Weaver
 
 This guide lists system prerequisites **before** installing Weaver on **Windows** or **Linux**. Production edge target remains **Raspberry Pi 5 (16GB) + Hailo-10H**.
 
@@ -13,7 +13,7 @@ Hybrid dependencies: **Coastal-Alpine-Core** (required SDK), optional **Aether**
 | **Python** | 3.10+ (3.11+ recommended) |
 | **Git** | Any recent release |
 | **pip / venv** | Bundled with Python |
-| **Ollama** | Local LLM runtime — [ollama.com](https://ollama.com) |
+| **Ollama** | Local LLM runtime - [ollama.com](https://ollama.com) |
 | **Model** | e.g. `ollama pull gemma4:e4b` |
 | **Core SDK** | Coastal-Alpine-Core `@v0.5.4` (or newer tagged release) |
 
@@ -31,8 +31,8 @@ Optional:
 ```bash
 sudo apt-get update
 sudo apt-get install -y \
-  python3 python3-dev python3-venv python3-pip \
-  git build-essential
+ python3 python3-dev python3-venv python3-pip \
+ git build-essential
 ```
 
 ### 2. Ollama
@@ -63,7 +63,7 @@ See [installation.md](installation.md) for manual steps.
 
 ### 1. Prerequisites
 
-1. **Python 3.10+** from [python.org](https://www.python.org/downloads/) — enable **Add Python to PATH** and **py launcher**.
+1. **Python 3.10+** from [python.org](https://www.python.org/downloads/) - enable **Add Python to PATH** and **py launcher**.
 2. **Git for Windows** from [git-scm.com](https://git-scm.com/).
 3. **PowerShell 5.1+** or **PowerShell 7+** (recommended).
 

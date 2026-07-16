@@ -8,12 +8,12 @@ This folder contains the governance and operational documentation for Coastal Al
 - Link technical architecture and compliance requirements to practical workflows.
 
 ## Key Documents
-- `corporate_frameworks.md` — High-level overview of corporate policy, governance frameworks, and NZ legislative alignment.
-- `ethics_review_playbook.md` — Reproducible ethics assessment workflow, decision criteria, SLAs, and remediation tracking.
-- `dao_charter.md` — Community governance rules and access controls for culturally sensitive digital assets.
-- `platform_runbook.md` — Operational runbook for platform deployment, testing, incident response, and agentic safety controls.
-- `Context/multi_tenant_database_schema.md` — Tenant-aware database architecture, vector-store design, and semantic memory flow.
-- `governance_index.md` — A one-page index that summarizes this knowledge base and provides fast navigation.
+- `corporate_frameworks.md` - High-level overview of corporate policy, governance frameworks, and NZ legislative alignment.
+- `ethics_review_playbook.md` - Reproducible ethics assessment workflow, decision criteria, SLAs, and remediation tracking.
+- `dao_charter.md` - Community governance rules and access controls for culturally sensitive digital assets.
+- `platform_runbook.md` - Operational runbook for platform deployment, testing, incident response, and agentic safety controls.
+- `Context/multi_tenant_database_schema.md` - Tenant-aware database architecture, vector-store design, and semantic memory flow.
+- `governance_index.md` - A one-page index that summarizes this knowledge base and provides fast navigation.
 
 ## Usage
 - Start with `governance_index.md` for the high-level overview.

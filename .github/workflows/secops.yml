@@ -1,39 +1,39 @@
 
 name: SecOps Scan
 on:
-  schedule:
-    - cron: "0 */8 * * *"   # every 8 hours starting at 00:00 UTC
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-  pull_request:
-    types: [ opened, synchronize, reopened ]
+ schedule:
+ - cron: "0 */8 * * *" # every 8 hours starting at 00:00 UTC
+ workflow_dispatch:
+ push:
+ branches: [ main ]
+ pull_request:
+ types: [ opened, synchronize, reopened ]
 concurrency:
-  group: secops-${{ github.ref }}
-  cancel-in-progress: true
+ group: secops-${{ github.ref }}
+ cancel-in-progress: true
 permissions:
-  contents: read
+ contents: read
 jobs:
-  security-scan:
-    name: Bandit SAST Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
+ security-scan:
+ name: Bandit SAST Scan
+ runs-on: ubuntu-latest
+ steps:
+ - name: Checkout repository
+ uses: actions/checkout@v4
+ with:
+ submodules: recursive
+ fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11' # Matches our hardened edge environment
+ - name: Set up Python
+ uses: actions/setup-python@v5
+ with:
+ python-version: '3.11' # Matches our hardened edge environment
 
-      - name: Install Bandit
-        run: pip install bandit
+ - name: Install Bandit
+ run: pip install bandit
 
-      - name: Run Bandit Security Scan
-        # CRITICAL SECOPS CONFIG: We explicitly exclude the stress tests folder.
-        # Otherwise, our simulated prompt injections and mock JWTs will trip the alarms!
-        # -ll means report only Medium and High severity issues.
-        run: bandit -r . -ll --exclude ./tests_security_stress/
+ - name: Run Bandit Security Scan
+ # CRITICAL SECOPS CONFIG: We explicitly exclude the stress tests folder.
+ # Otherwise, our simulated prompt injections and mock JWTs will trip the alarms!
+ # -ll means report only Medium and High severity issues.
+ run: bandit -r . -ll --exclude ./tests_security_stress/

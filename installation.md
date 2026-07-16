@@ -1,4 +1,4 @@
-# Installation Guide — Weaver
+# Installation Guide - Weaver
 
 Follow the instructions for your OS. Weaver runs on **Windows**, **Linux**, and **macOS** for development; production edge remains **RPi 5 16GB + Hailo-10H**.
 

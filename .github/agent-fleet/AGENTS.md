@@ -1,7 +1,7 @@
 # AGENTS.md - Coastal Alpine Tech portfolio
 
-**Coastal Alpine Tech Limited - Pre-seed** | Taranaki | Aotearoa New Zealand  
-**R&D since 8 August 2025** | **Founded 8 August 2026**  
+**Coastal Alpine Tech Limited - Pre-seed** | Taranaki | Aotearoa New Zealand 
+**R&D since 8 August 2025** | **Founded 8 August 2026** 
 **Org:** [fivepanelhat](https://github.com/fivepanelhat/fivepanelhat) | **Founder OS:** [NZ-Start-Up](https://github.com/fivepanelhat/NZ-Start-Up)
 
 Instructions for any coding or agentic assistant in this repository.
@@ -79,5 +79,5 @@ Run whatever this repo defines (pytest, cargo test, npm test, etc.). At minimum:
 
 ## Tone
 
-Practical, NZ-grounded, pre-seed honest. No hype that agents "run the company."  
+Practical, NZ-grounded, pre-seed honest. No hype that agents "run the company." 
 Respect Te Mana Raraunga and Te Tiriti; escalate cultural content.

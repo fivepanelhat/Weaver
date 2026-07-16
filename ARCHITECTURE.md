@@ -15,45 +15,45 @@ Weaver is designed to provide secure, offline multi-tenant document retrieval an
 ```mermaid
 %%{init: { "theme": "dark", "flowchart": { "curve": "basis", "useMaxWidth": true } }}%%
 flowchart TB
-    U[User request] --> O[Orchestrator weaver_graph]
-    O --> I[Intake]
-    O --> F[Fulfilment]
-    O --> R[Resolution]
-    I & F & R --> KB[Tenant knowledge base]
-    KB --> C[Coastal-Alpine-Core guards + Ollama client]
-    C --> LLM[Local Ollama]
-    subgraph HOSTS[Hosts]
-        W[Windows install.ps1]
-        L[Linux install.sh]
-        P[RPi 5 edge]
-    end
-    O -.-> HOSTS
+ U[User request] --> O[Orchestrator weaver_graph]
+ O --> I[Intake]
+ O --> F[Fulfilment]
+ O --> R[Resolution]
+ I & F & R --> KB[Tenant knowledge base]
+ KB --> C[Coastal-Alpine-Core guards + Ollama client]
+ C --> LLM[Local Ollama]
+ subgraph HOSTS[Hosts]
+ W[Windows install.ps1]
+ L[Linux install.sh]
+ P[RPi 5 edge]
+ end
+ O -.-> HOSTS
 ```
 
 ```text
-┌─────────────────────────────────────────────────────┐
-│                   User Request                      │
-└───────────────────────┬─────────────────────────────┘
-                        │
-                        ▼
-               ┌─────────────────┐
-               │  Orchestrator   │
-               │  (weaver_graph) │
-               └────────┬────────┘
-                        │
-         ┌──────────────┼──────────────┐
-         ▼              ▼              ▼
-  ┌────────────┐ ┌────────────┐ ┌────────────┐
-  │ Intake     │ │ Fulfilment │ │ Resolution │
-  │ Agent      │ │ Agent      │ │ Agent      │
-  └──────┬─────┘ └──────┬─────┘ └──────┬─────┘
-         │              │              │
-         └──────────────┼──────────────┘
-                        ▼
-         ┌──────────────────────────────┐
-         │     Tenant Knowledge Base    │
-         │   (Isolated Vector Store)    │
-         └──────────────────────────────┘
+-----------------------------------------------------
+| User Request |
+`----------------------------------------------------
+ |
+ 
+ -----------------
+ | Orchestrator |
+ | (weaver_graph) |
+ `----------------
+ |
+ ----------------------------
+ 
+ ------------ ------------ ------------
+ | Intake | | Fulfilment | | Resolution |
+ | Agent | | Agent | | Agent |
+ `----------- `----------- `-----------
+ | | |
+ `----------------------------
+ 
+ ------------------------------
+ | Tenant Knowledge Base |
+ | (Isolated Vector Store) |
+ `------------------------------
 ```
 
 ---
@@ -63,11 +63,11 @@ flowchart TB
 Multi-tenancy is enforced at both the relational and semantic layers.
 
 ### Entities (`models.py`):
-- `tenants` — Primary business accounts, including subscription states and identifiers.
-- `tenant_configs` — Scoped configuration keys (e.g. brand voice, routing rules, contact lists).
-- `knowledge_sources` — Catalog of files and documents uploaded by the tenant.
-- `interaction_logs` — Audit log of all interactions, metadata, and agent outcomes.
-- `vector_embeddings` — (For pgvector/Milvus) Vector representations scoped by `tenant_id` and document mapping.
+- `tenants` - Primary business accounts, including subscription states and identifiers.
+- `tenant_configs` - Scoped configuration keys (e.g. brand voice, routing rules, contact lists).
+- `knowledge_sources` - Catalog of files and documents uploaded by the tenant.
+- `interaction_logs` - Audit log of all interactions, metadata, and agent outcomes.
+- `vector_embeddings` - (For pgvector/Milvus) Vector representations scoped by `tenant_id` and document mapping.
 
 ### Tenant Isolation Enforcement (`database.py` & `knowledge_base.py`):
 Every database session initialization is scoped. All queries must pass a matching tenant ID, which is validated by `coastal_alpine_core.security.tenant_isolated_query` to block tenant cross-contamination.
@@ -79,19 +79,19 @@ Every database session initialization is scoped. All queries must pass a matchin
 Routing logic is compiled into a lightweight state machine under `weaver_graph/graph.py`:
 
 ```text
-┌──────────────┐
-│  Intake      ├──────► (Checks tenant token and query context)
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│  Fulfillment ├──────► (Retrieves scoped vector facts, runs Gemma 4)
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│  Resolution  ├──────► (Assembles response & validates logs)
-└──────────────┘
+--------------
+| Intake |------ (Checks tenant token and query context)
+`-------------
+ |
+ 
+--------------
+| Fulfillment |------ (Retrieves scoped vector facts, runs Gemma 4)
+`-------------
+ |
+ 
+--------------
+| Resolution |------ (Assembles response & validates logs)
+`--------------
 ```
 
 ### Routing Nodes (`weaver_graph/orchestrator.py`):

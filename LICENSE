@@ -5,33 +5,33 @@ Copyright (c) 2026 Wayne Roberts. All rights reserved.
 This software and all associated documentation, source code, data, architectures, and materials ("Software") are the exclusive intellectual property of Coastal Alpine Tech Limited.
 
 1. Ownership
-   Coastal Alpine Tech Limited retains all rights, title, and interest in and to the Software, including all copyrights, trade secrets, patents, trademarks, and other proprietary or sovereign data rights.
+ Coastal Alpine Tech Limited retains all rights, title, and interest in and to the Software, including all copyrights, trade secrets, patents, trademarks, and other proprietary or sovereign data rights.
 
 2. License Grant
-   Coastal Alpine Tech Limited hereby grants no rights except those expressly set forth in this document. Any use, reproduction, distribution, modification, or derivative work of the Software is strictly prohibited unless explicitly authorized in writing by Coastal Alpine Tech Limited.
+ Coastal Alpine Tech Limited hereby grants no rights except those expressly set forth in this document. Any use, reproduction, distribution, modification, or derivative work of the Software is strictly prohibited unless explicitly authorized in writing by Coastal Alpine Tech Limited.
 
 3. Permitted Use
-   If Coastal Alpine Tech Limited provides a separate written agreement or commercial license, that agreement governs permitted use. In the absence of such an agreement, no license is granted, no rights are implied, and access to this source code does not constitute a right to execute it.
+ If Coastal Alpine Tech Limited provides a separate written agreement or commercial license, that agreement governs permitted use. In the absence of such an agreement, no license is granted, no rights are implied, and access to this source code does not constitute a right to execute it.
 
 4. Restrictions
-   Except as expressly authorized in writing by Coastal Alpine Tech Limited, you may not:
-   a. copy, reproduce, publish, distribute, fork, clone, or mirror the Software;
-   b. modify, adapt, translate, or create derivative works of the Software;
-   c. use the Software, its source code, underlying logic, architecture patterns, or outputs to train, fine-tune, test, or validate any artificial intelligence, machine learning, or automated decision-making models;
-   d. reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code or operational logic of the Software;
-   e. rent, lease, sublicense, sell, or otherwise transfer rights to the Software.
+ Except as expressly authorized in writing by Coastal Alpine Tech Limited, you may not:
+ a. copy, reproduce, publish, distribute, fork, clone, or mirror the Software;
+ b. modify, adapt, translate, or create derivative works of the Software;
+ c. use the Software, its source code, underlying logic, architecture patterns, or outputs to train, fine-tune, test, or validate any artificial intelligence, machine learning, or automated decision-making models;
+ d. reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code or operational logic of the Software;
+ e. rent, lease, sublicense, sell, or otherwise transfer rights to the Software.
 
 5. Copyright Notice
-   Any permitted copies or partial integrations of the Software must retain the above copyright notice, this license text, and any other proprietary notices.
+ Any permitted copies or partial integrations of the Software must retain the above copyright notice, this license text, and any other proprietary notices.
 
 6. Warranty Disclaimer
-   The Software is provided "as is" without warranty of any kind, whether express, implied, statutory, or otherwise, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
+ The Software is provided "as is" without warranty of any kind, whether express, implied, statutory, or otherwise, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
 
 7. Limitation of Liability
-   Coastal Alpine Tech Limited shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to this Software, even if advised of the possibility of such damages.
+ Coastal Alpine Tech Limited shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to this Software, even if advised of the possibility of such damages.
 
 8. Governing Law & Jurisdiction
-   This License is governed by and construed in accordance with the laws of New Zealand, without regard to conflict of law principles. Any dispute arising under or in connection with this License shall be subject to the exclusive jurisdiction of the courts of New Zealand.
+ This License is governed by and construed in accordance with the laws of New Zealand, without regard to conflict of law principles. Any dispute arising under or in connection with this License shall be subject to the exclusive jurisdiction of the courts of New Zealand.
 
 9. Acceptance
-   Downloading, cloning, accessing, or using the Software constitutes full acceptance of this License and an absolute agreement to be bound by its terms.
+ Downloading, cloning, accessing, or using the Software constitutes full acceptance of this License and an absolute agreement to be bound by its terms.
