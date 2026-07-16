@@ -1,7 +1,7 @@
 # Coastal Alpine Tech - portfolio congruence
 
-**Company:** Coastal Alpine Tech Limited | **Stage:** Pre-seed | **Region:** Taranaki, Aotearoa New Zealand  
-**R&D since:** 8 August 2025 | **Founding target:** 8 August 2026  
+**Company:** Coastal Alpine Tech Limited | **Stage:** Pre-seed | **Region:** Taranaki, Aotearoa New Zealand 
+**R&D since:** 8 August 2025 | **Founding target:** 8 August 2026 
 **Org home:** [fivepanelhat](https://github.com/fivepanelhat/fivepanelhat) | **Founder OS:** [NZ-Start-Up](https://github.com/fivepanelhat/NZ-Start-Up)
 
 This repository is part of the **Kiwi Edge AI Stack** - hybrid edge (RPi 5 16GB + Hailo-10H) + multi-model fleets + Te Mana Raraunga local-first data. It is **not** a claim of large-scale commercial deployment or raised Series capital.
@@ -28,7 +28,7 @@ This repository is part of the **Kiwi Edge AI Stack** - hybrid edge (RPi 5 16GB 
 
 ## Autonomy ceiling (all agentic work)
 
-**Agents inform, draft, prepare, monitor, and remind.**  
+**Agents inform, draft, prepare, monitor, and remind.** 
 **Humans advise, sign, file, send, and pay.**
 
 Hard refusals: inventing NZBN/IRD/partner consent | autonomous cold email (UEM) | filing government forms | moving money | cultural extraction / invented iwi endorsement.
@@ -48,10 +48,10 @@ Portable skills and policy live under:
 
 ```text
 .github/agent-fleet/
-  AGENTS.md
-  anti-hallucination.md
-  agent-hardening/SKILL.md
-  cat-architectural-standards/SKILL.md
+ AGENTS.md
+ anti-hallucination.md
+ agent-hardening/SKILL.md
+ cat-architectural-standards/SKILL.md
 ```
 
 Canonical full fleet + runtime: **NZ-Start-Up** (`skills/`, `nz-startup` CLI).

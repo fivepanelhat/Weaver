@@ -1,47 +1,47 @@
 name: Weaver CI
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+ FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+ push:
+ branches: [ main ]
+ pull_request:
+ branches: [ main ]
 
 permissions:
-  contents: read
+ contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+ build:
+ runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+ steps:
+ - name: Checkout repository
+ uses: actions/checkout@v4
+ with:
+ submodules: recursive
+ fetch-depth: 0
+ - name: Set up Python 3.10
+ uses: actions/setup-python@v5
+ with:
+ python-version: '3.10'
 
-      - name: Install dependencies
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python -m pip install --upgrade pip
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          # Prefer requirements.txt pin (Core @v0.5.5); keep explicit fallback for cache misses
-          pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5"
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+ - name: Install dependencies
+ env:
+ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ run: |
+ python -m pip install --upgrade pip
+ git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+ # Prefer requirements.txt pin (Core @v0.5.5); keep explicit fallback for cache misses
+ pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5"
+ pip install -r requirements.txt
+ pip install -r requirements-dev.txt
 
-      - name: Lint with flake8
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+ - name: Lint with flake8
+ run: |
+ flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+ flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Run test suite
-        run: |
-          pytest
+ - name: Run test suite
+ run: |
+ pytest

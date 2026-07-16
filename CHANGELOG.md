@@ -4,13 +4,13 @@
 ## Hybrid platform update (July 2026)
 
 - Dual-platform installers: `install.sh` (Linux/macOS) and `install.ps1` (Windows)
-- Mermaid system maps updated for hybridisation (Core · Weaver · Aether · stack) and Windows + Linux hosts
+- Mermaid system maps updated for hybridisation (Core | Weaver | Aether | stack) and Windows + Linux hosts
 - Architecture overview images refreshed for hybrid stack + dual OS targets
 - Developer setup / installation docs cover Windows and Linux prerequisites and packages
 
 All notable changes to the `weaver` repository will be documented in this file.
 
-## [0.1.0] - 2026-07-13 — First public release
+## [0.1.0] - 2026-07-13 - First public release
 
 First tagged, public release of Weaver. This `0.1.0` marks the start of
 public [semantic versioning](https://semver.org/); the `1.x` entries below
@@ -18,34 +18,34 @@ were **internal pre-release iterations** and are retained for history.
 
 ### Included
 - `AgentOrchestrator` unified entrypoint with two routing modes: direct
-  agent intake (`agents.py`) and the `weaver_graph` LangGraph state machine
-  (`use_graph=True`).
+ agent intake (`agents.py`) and the `weaver_graph` LangGraph state machine
+ (`use_graph=True`).
 - Tenant-isolated knowledge base (in-memory + SQLAlchemy clients) with
-  cosine-similarity RAG retrieval; cross-tenant leakage covered by tests.
+ cosine-similarity RAG retrieval; cross-tenant leakage covered by tests.
 - Security gate on every message via Coastal-Alpine-Core `SecurityGuard`;
-  telemetry via `TelemetryTracker`.
+ telemetry via `TelemetryTracker`.
 - Offline-capable local inference through Ollama (`gemma4:e4b`) with a
-  deterministic fallback when disconnected.
+ deterministic fallback when disconnected.
 - pytest suite (routing, escalation, tenant isolation, LLM fallback, demo
-  smoke) plus an adversarial `tests_security_stress/` red-team suite.
+ smoke) plus an adversarial `tests_security_stress/` red-team suite.
 
 ### Changed for release
 - Removed orphaned industrial edge-fleet modules (`src/`: MQTT black-box
-  logger, fleet policy, OPC-UA bridge, TPM attestation) that did not belong
-  to the helpdesk product; they remain in git history.
+ logger, fleet policy, OPC-UA bridge, TPM attestation) that did not belong
+ to the helpdesk product; they remain in git history.
 - Dockerfile entrypoint now runs the helpdesk demo instead of the removed
-  black-box logger.
+ black-box logger.
 - Packaging: static `version = "0.1.0"` (previously an unresolved
-  `dynamic` version that broke `pip install .` / `python -m build`).
+ `dynamic` version that broke `pip install .` / `python -m build`).
 - README: corrected directory structure; relabelled aspirational
-  "real-world examples" as target scenarios and benchmarks as preliminary
-  targets.
+ "real-world examples" as target scenarios and benchmarks as preliminary
+ targets.
 
 ### Known limitations
 - Fulfilment / Resolution agents are scaffolds; the graph path is the
-  primary tested route.
+ primary tested route.
 - Requires a locally running Ollama for live inference (falls back offline).
-- Proprietary licence — see [LICENSE](./LICENSE); no open-source grant.
+- Proprietary licence - see [LICENSE](./LICENSE); no open-source grant.
 
 ## [1.3.0] - 2026-07-10
 

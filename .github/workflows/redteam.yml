@@ -1,40 +1,40 @@
 name: RedTeam Tests
 on:
-  schedule:
-    - cron: "0 */8 * * *"
-  workflow_dispatch:
+ schedule:
+ - cron: "0 */8 * * *"
+ workflow_dispatch:
 concurrency:
-  group: redteam-${{ github.ref }}
-  cancel-in-progress: true
+ group: redteam-${{ github.ref }}
+ cancel-in-progress: true
 permissions:
-  contents: read
+ contents: read
 jobs:
-  redteam:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Run adversarial / security stress suite
-        shell: bash
-        # Replaces the previous job, which apt-installed a package that no
-        # longer exists on ubuntu-latest (zaproxy) and pointed ZAP at
-        # https://example.com — a third-party site we must not scan.
-        # The suite drives AgentOrchestrator -> Coastal-Alpine-Core
-        # SecurityGuard, so the runtime deps (incl. Core) must be installed.
-        run: |
-          if compgen -G "tests_security_stress/test_*.py" > /dev/null; then
-            python -m pip install --upgrade pip
-            pip install pytest requests
-            if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            python -m pytest tests_security_stress/ -v --tb=short
-          else
-            echo "No local adversarial suite in this repo — nothing to run."
-          fi
+ redteam:
+ runs-on: ubuntu-latest
+ steps:
+ - name: Checkout repository
+ uses: actions/checkout@v4
+ with:
+ submodules: recursive
+ fetch-depth: 0
+ - name: Set up Python
+ uses: actions/setup-python@v5
+ with:
+ python-version: '3.11'
+ - name: Run adversarial / security stress suite
+ shell: bash
+ # Replaces the previous job, which apt-installed a package that no
+ # longer exists on ubuntu-latest (zaproxy) and pointed ZAP at
+ # https://example.com - a third-party site we must not scan.
+ # The suite drives AgentOrchestrator -> Coastal-Alpine-Core
+ # SecurityGuard, so the runtime deps (incl. Core) must be installed.
+ run: |
+ if compgen -G "tests_security_stress/test_*.py" > /dev/null; then
+ python -m pip install --upgrade pip
+ pip install pytest requests
+ if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+ if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+ python -m pytest tests_security_stress/ -v --tb=short
+ else
+ echo "No local adversarial suite in this repo - nothing to run."
+ fi

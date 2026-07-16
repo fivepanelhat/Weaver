@@ -1,4 +1,4 @@
-# Security Policy — Weaver
+# Security Policy - Weaver
 
 Sovereign multi-tenant AI routing and RAG orchestration at the edge.
 
@@ -35,7 +35,7 @@ Report via private GitHub Security Advisory or the Chief Architect. Include tena
 ## Local / edge hygiene
 
 - `.env*`, `*.pem`, `*.key`, `secrets/` gitignored.
-- Prefer mTLS MQTT (`ssl://…:8883`) in production.
+- Prefer mTLS MQTT (`ssl://...:8883`) in production.
 - Pre-commit secret detection where enabled.
 
 ## Quality gates

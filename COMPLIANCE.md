@@ -24,7 +24,7 @@ For New Zealand public sector organisations, local councils, and public services
 
 ---
 
-## 3. Māori Data Sovereignty (Te Mana Raraunga)
+## 3. Maori Data Sovereignty (Te Mana Raraunga)
 
 * **Te Mana o te Raraunga:** Personal information, oral history files, and customary land registry data vectorized for RAG systems represent digital expressions of *whakapapa* and *taonga*.
 * **Local Guardianship:** Weaver is compiled and deployed locally in New Plymouth, Taranaki. By avoiding offshore clouds (such as AWS, GCP, or Azure), iwi trust entities retain custody of their digital records on their own physical *whenua* (land).

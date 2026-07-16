@@ -30,7 +30,7 @@
 ## Voting Rules (example)
 - Quorum: 30% of active voting members
 - Approval: simple majority of votes cast, or supermajority for highly sensitive items (define thresholds per community choice)
-- Voting window: typically 7–21 days depending on urgency and community preference
+- Voting window: typically 7-21 days depending on urgency and community preference
 
 ## Access & Consent
 - Access granted only per approved proposal and subject to consent terms.

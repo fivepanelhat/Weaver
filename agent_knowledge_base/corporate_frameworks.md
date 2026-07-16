@@ -42,7 +42,7 @@ Artifacts: Review minutes, decision log, remediation tracker, and published summ
 
 Metrics & Review Cycle:
 - Completion of annual review (yes/no)
-- Number of open remediation items (target: 0–3)
+- Number of open remediation items (target: 0-3)
 - Time-to-resolution for high-risk items (target: 90 days)
 
 References: [Ethics Review Playbook](ethics_review_playbook.md), [Platform Runbook](platform_runbook.md), [Risk and compliance register](#).

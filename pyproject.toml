@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "weaver"
 version = "0.1.0"
 authors = [
-  { name="Wayne Roberts", email="architecture@coastalalpinetech.local" },
+ { name="Wayne Roberts", email="architecture@coastalalpinetech.local" },
 ]
 description = "Sovereign multi-tenant AI routing and RAG orchestration at the edge (LangGraph-based)"
 readme = "README.md"
@@ -14,35 +14,35 @@ requires-python = ">=3.10"
 license = { text = "Proprietary - Coastal Alpine Tech Limited" }
 
 dependencies = [
-    "SQLAlchemy>=2.0.0,<3.0.0",
-    "psycopg2-binary>=2.9.12",
-    "langchain-text-splitters>=1.1.2,<2.0.0",
-    "langchain-community>=0.4.2,<1.0.0",
-    "langgraph>=1.0.10",
-    "langsmith>=0.8.18",
-    "pydantic-settings>=2.14.2",
-    "paho-mqtt>=1.6.1",
-    "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5",
+ "SQLAlchemy>=2.0.0,<3.0.0",
+ "psycopg2-binary>=2.9.12",
+ "langchain-text-splitters>=1.1.2,<2.0.0",
+ "langchain-community>=0.4.2,<1.0.0",
+ "langgraph>=1.0.10",
+ "langsmith>=0.8.18",
+ "pydantic-settings>=2.14.2",
+ "paho-mqtt>=1.6.1",
+ "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.23.0",
-    "black>=24.0.0",
-    "mypy>=1.10.0",
-    "ruff>=0.4.0",
+ "pytest>=8.0.0",
+ "pytest-asyncio>=0.23.0",
+ "black>=24.0.0",
+ "mypy>=1.10.0",
+ "ruff>=0.4.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = [
-    "weaver_graph*",
-    "agents*",
-    "orchestrator*",
-    "knowledge_base*",
-    "database*",
-    "models*",
+ "weaver_graph*",
+ "agents*",
+ "orchestrator*",
+ "knowledge_base*",
+ "database*",
+ "models*",
 ]
 
 [tool.ruff]

@@ -1,17 +1,17 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+ - package-ecosystem: "pip"
+ directory: "/"
+ schedule:
+ interval: "weekly"
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "06:00"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "security"
+ - package-ecosystem: "github-actions"
+ directory: "/"
+ schedule:
+ interval: "weekly"
+ day: "tuesday"
+ time: "06:00"
+ open-pull-requests-limit: 5
+ labels:
+ - "dependencies"
+ - "security"
