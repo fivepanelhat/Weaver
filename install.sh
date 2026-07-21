@@ -26,6 +26,14 @@ if [[ -z "$PYTHON_BIN" ]]; then
   exit 1
 fi
 PY_VER="$("$PYTHON_BIN" -c 'import sys; print("%d.%d" % sys.version_info[:2])')"
+
+# Python version gate
+PY_MAJOR="$("$PYTHON_BIN" -c 'import sys; print(sys.version_info[0])')"
+PY_MINOR="$("$PYTHON_BIN" -c 'import sys; print(sys.version_info[1])')"
+if [[ "$PY_MAJOR" -lt 3 ]] || { [[ "$PY_MAJOR" -eq 3 ]] && [[ "$PY_MINOR" -lt 10 ]]; }; then
+  err "Python 3.10+ is required (found ${PY_MAJOR}.${PY_MINOR})."
+  exit 1
+fi
 info "Using Python $PY_VER ($PYTHON_BIN)"
 
 if [[ -f "bootstrap.py" ]] && [[ -f "requirements.txt" || -f "pyproject.toml" ]]; then

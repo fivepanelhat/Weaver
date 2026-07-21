@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import TypedDict, List, Annotated, Any, Optional
 import operator
+
+from pydantic import BaseModel, Field
 
 from weaver_graph.graph import StateGraph, END
 
@@ -19,6 +22,24 @@ class HelpdeskState(TypedDict):
     retrieved_context: str
     classification: str
     conversation_history: Annotated[List[str], operator.add]
+
+
+class RouteDecision(BaseModel):
+    """Structured output schema for LLM routing decisions."""
+    route: str = Field(
+        description="Either 'fulfilment' or 'escalation'",
+        pattern="^(fulfilment|escalation)$"
+    )
+    reply: str = Field(
+        description="Short customer-facing response (max 280 chars)",
+        max_length=280
+    )
+    confidence: float = Field(
+        default=0.8,
+        ge=0.0,
+        le=1.0,
+        description="Model confidence in the routing decision"
+    )
 
 
 def _extract_docs_text(docs: Any) -> str:
@@ -45,7 +66,6 @@ def _retrieve_context(
     query = state.get("user_message") or ""
     tenant_id = state.get("tenant_id") or ""
 
-    # Prefer explicit vector DB (tests / production adapters)
     if vector_db_client is not None:
         try:
             if hasattr(vector_db_client, "similarity_search"):
@@ -63,7 +83,6 @@ def _retrieve_context(
         except Exception as e:
             logger.warning("Vector retrieval failed: %s", e)
 
-    # Knowledge base client (InMemory / SQLAlchemy)
     if kb_client is not None:
         try:
             results = kb_client.query(query, tenant_id=tenant_id, top_k=top_k)
@@ -104,34 +123,42 @@ def _llm_route(
 ) -> tuple[str, str]:
     """
     Returns (classification, response_text).
-    classification is 'fulfilment' | 'escalation'.
+    Uses structured output when available, falls back to text parsing.
+    Keyword escalation is authoritative (fail-safe).
     """
     message = state.get("user_message") or ""
     rules = state.get("escalation_rules") or {}
     brand = state.get("brand_voice") or "Professional and helpful."
 
-    # Keyword fast-path first (cheap, deterministic)
+    # Keyword fast-path (cheap + deterministic)
     keyword = _keyword_route(message, rules if isinstance(rules, dict) else {})
 
     if llm is None:
         if keyword == "escalation":
-            return "escalation", (
-                "I understand this needs careful attention. "
-                "Connecting you with a human advisor."
-            )
-        return "fulfilment", (
-            "Let me check that against our policies and records."
-        )
+            return "escalation", "I understand this needs careful attention. Connecting you with a human advisor."
+        return "fulfilment", "Let me check that against our policies and records."
 
-    prompt = (
-        "You are a tenant-scoped helpdesk router. Respond with EXACTLY two lines:\n"
-        "ROUTE: fulfilment|escalation\n"
-        "REPLY: <one short customer-facing sentence>\n\n"
-        f"Brand voice: {brand}\n"
-        f"Escalation rules: {rules}\n"
-        f"Retrieved policy context:\n{context or '(none)'}\n\n"
-        f"Customer message: {message}\n"
-    )
+    # Try structured output first (Ollama JSON schema)
+    try:
+        if hasattr(llm, "invoke_structured"):
+            decision: RouteDecision = llm.invoke_structured(
+                prompt=_build_route_prompt(message, context, brand, rules),
+                schema=RouteDecision,
+            )
+            route = decision.route
+            reply = decision.reply.strip()
+
+            # Safety: keyword escalation is authoritative
+            if keyword == "escalation" and route != "escalation":
+                route = "escalation"
+                reply = "I'll escalate this to a human specialist."
+
+            return route, reply
+    except Exception as e:
+        logger.warning("Structured routing failed, falling back to text: %s", e)
+
+    # Fallback: original text parsing path
+    prompt = _build_route_prompt(message, context, brand, rules)
     try:
         raw = str(llm.invoke(prompt)).strip()
     except Exception as e:
@@ -143,6 +170,7 @@ def _llm_route(
     route = keyword
     reply = ""
     upper = raw.upper()
+
     if "ROUTE:" in upper:
         for line in raw.splitlines():
             if line.upper().startswith("ROUTE:"):
@@ -156,9 +184,11 @@ def _llm_route(
     elif "ESCALATE" in upper:
         route = "escalation"
 
-    # Safety: never downgrade keyword escalation without explicit fulfilment
-    if keyword == "escalation" and route != "fulfilment":
+    # Safety: keyword escalation is authoritative
+    if keyword == "escalation" and route != "escalation":
         route = "escalation"
+        if not reply:
+            reply = "I'll escalate this to a human specialist."
 
     if not reply:
         reply = (
@@ -166,23 +196,25 @@ def _llm_route(
             if route == "escalation"
             else "I'll help with that using our local policies."
         )
+
     return route, reply
 
 
-def agnostic_intake_node(state: HelpdeskState, *args, **kwargs):
-    """
-    Frontline agent: retrieves tenant-specific context and categorizes intent.
+def _build_route_prompt(message: str, context: str, brand: str, rules: dict) -> str:
+    return (
+        "You are a tenant-scoped helpdesk router. Respond with a clear routing decision.\n"
+        f"Brand voice: {brand}\n"
+        f"Escalation rules: {rules}\n"
+        f"Retrieved policy context:\n{context or '(none)'}\n\n"
+        f"Customer message: {message}\n"
+    )
 
-    Optional injected deps (positional or keyword):
-      vector_db_client / vdb
-      llm
-      kb_client
-    """
+
+def agnostic_intake_node(state: HelpdeskState, *args, **kwargs):
     vector_db_client = kwargs.get("vector_db_client")
     kb_client = kwargs.get("kb_client")
     llm = kwargs.get("llm")
 
-    # Positional convenience: graph.run(state, vdb, llm) as used by tests
     if len(args) >= 1 and vector_db_client is None:
         vector_db_client = args[0]
     if len(args) >= 2 and llm is None:
@@ -203,7 +235,6 @@ def agnostic_intake_node(state: HelpdeskState, *args, **kwargs):
 
 
 def fulfilment_node(state: HelpdeskState, *args, **kwargs):
-    """Handles standard operational tasks (e.g., checking order DBs)."""
     logger.info("Fulfilment for tenant=%s", state.get("tenant_id"))
     ctx = (state.get("retrieved_context") or "").strip()
     if ctx:
@@ -215,7 +246,6 @@ def fulfilment_node(state: HelpdeskState, *args, **kwargs):
 
 
 def escalation_node(state: HelpdeskState, *args, **kwargs):
-    """Pushes complex or rule-breaking queries to a human queue."""
     logger.info("Escalation for tenant=%s", state.get("tenant_id"))
     return {
         "conversation_history": ["System: Ticket escalated to human support."]
@@ -223,7 +253,6 @@ def escalation_node(state: HelpdeskState, *args, **kwargs):
 
 
 def build_agnostic_helpdesk():
-    """Compiles the helpdesk state machine."""
     workflow = StateGraph(HelpdeskState)
 
     workflow.add_node("intake", agnostic_intake_node)
