@@ -1,40 +1,44 @@
-# Coastal Alpine Tech - 'Weaver' SecOps Protocol
+# Security Policy — Weaver
 
-This document outlines the security perimeter setup and SecOps protocols configured for the **Weaver** repository.
+Sovereign multi-tenant AI routing and RAG orchestration at the edge.
 
----
+## Supported Versions
 
-## 1. Local Edge Environment Security (`.gitignore`)
-The `.gitignore` has been updated to prevent key edge/development secrets and runtime artifacts from being committed:
-* **Exclusions:**
-  * Local configuration override templates (`.env.*`)
-  * Local private/public certificates (`*.pem`, `*.key`, `*.crt`)
-  * Edge secrets directory (`secrets/`)
-  * Local baseline mapping configuration (`.secrets.baseline`)
-  * Logs and debug directories (`*.log`)
+| Branch / track | Supported |
+| -------------- | --------- |
+| `main` | Yes |
 
----
+## Vulnerability Disclosure
 
-## 2. Secure Configuration Template (`.env.example`)
-Environment templates are set up to capture all required edge keys safely without leaking credentials. 
-* **Key configurations declared:**
-  ```bash
-  MQTT_BROKER_URL=ssl://your-broker-ip:8883
-  MQTT_USER=weaver_edge_node
-  MQTT_PASSWORD=insert_secure_password
-  MAGICBAG_API_KEY=insert_key_here
-  ```
+Do **not** open public issues for security flaws.
 
----
+Report via private GitHub Security Advisory or the Chief Architect. Include tenant-isolation impact if relevant.
 
-## 3. GitHub Actions Pipelines
-Automated vulnerability scans are scheduled on the main repository via:
-* **Dependabot (`.github/dependabot.yml`):** Auto-evaluates Python pip packages weekly and creates patches for vulnerable dependencies.
-* **CodeQL Analysis (`.github/workflows/security-scan.yml`):** Performs deep static code analysis (SAST) on push/PR events to main.
+## Security Notifications
 
----
+| Channel | Response |
+| ------- | -------- |
+| Dependabot (pip + Actions) | Merge security PRs promptly; pin floors for `langsmith`, `pydantic-settings`, Core |
+| Code scanning / Bandit / Gitleaks | Fix on `main`; no secrets in tree |
+| Red team / stress suites | Expand guardrails; never weaken tenant ACLs for convenience |
+| Core SDK advisories | Bump `coastal-alpine-core` and re-run pytest |
 
-## 4. Local Hook Validation (`pre-commit`)
-A local pre-commit hook is registered in the Git database `.git/hooks/pre-commit` to intercept commits containing plaintext secrets.
-* **Service Provider:** Yelp's `detect-secrets` hook.
-* **Execution:** Intercepts files and validates their signatures against `.secrets.baseline` prior to staging changes.
+## Active patches (2026-07)
+
+| ID | Mitigation |
+| -- | ---------- |
+| GHSA-f4xh-w4cj-qxq8 | `langsmith>=0.8.18` |
+| GHSA-4xgf-cpjx-pc3j | `pydantic-settings>=2.14.2` |
+| Prompt injection | Core `SecurityGuard` on all inbound LLM messages |
+| GITHUB_TOKEN sprawl | CI `permissions: contents: read` |
+
+## Local / edge hygiene
+
+- `.env*`, `*.pem`, `*.key`, `secrets/` gitignored.
+- Prefer mTLS MQTT (`ssl://…:8883`) in production.
+- Pre-commit secret detection where enabled.
+
+## Quality gates
+
+- CI: install Core + requirements, flake8, pytest.
+- SecOps + red-team scheduled workflows.

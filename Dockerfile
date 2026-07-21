@@ -15,5 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code
 COPY . .
 
-# Set default command
-CMD ["python", "src/blackbox_logger.py"]
+# Set default command — runs the multi-tenant helpdesk demo (offline-capable).
+# Weaver is a library/orchestrator, not a long-running server; override this
+# CMD to run your own entrypoint against the orchestrator API.
+CMD ["python", "demo.py"]

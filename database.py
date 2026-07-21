@@ -3,12 +3,20 @@ Database Connection & Query Interface
 
 Provides a clean interface for tenant-aware database operations.
 Ensures strict tenant isolation on all queries.
+
+Optimisations:
+- Lazy engine / session factory (no connection on import)
+- Optional auto schema init via WEAVER_AUTO_INIT_DB=1
+- Batch embedding inserts
 """
 
+from __future__ import annotations
+
+import logging
 import os
 import uuid
 from contextlib import contextmanager
-from typing import Optional, List
+from typing import Optional, List, Dict, Any, Iterable
 
 from models import (
     init_db,
@@ -18,16 +26,38 @@ from models import (
     KnowledgeSource,
     VectorEmbedding,
     InteractionLog,
-    BranchLineageHealth,
-    NodeFleetHealth,
 )
 
-# Initialize at module load
+logger = logging.getLogger("weaver.database")
+
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql://user:password@localhost/coastal_alpine_helpdesk",
 )  # pragma: allowlist secret
-engine, SessionLocal = init_db(DATABASE_URL)
+
+_engine = None
+_SessionLocal = None
+_tables_ready = False
+
+
+def _get_engine_and_session_factory():
+    """Lazy-create SQLAlchemy engine + sessionmaker."""
+    global _engine, _SessionLocal
+    if _engine is None or _SessionLocal is None:
+        _engine, _SessionLocal = init_db(DATABASE_URL)
+        logger.debug("Database engine initialised")
+    return _engine, _SessionLocal
+
+
+def ensure_tables() -> None:
+    """Create tables if missing (idempotent)."""
+    global _tables_ready
+    if _tables_ready:
+        return
+    engine, _ = _get_engine_and_session_factory()
+    create_all_tables(engine)
+    _tables_ready = True
+    logger.info("Database tables ensured")
 
 
 class TenantAwareDB:
@@ -47,7 +77,6 @@ class TenantAwareDB:
         industry: str,
         subscription_tier: str = "Starter",
     ) -> Tenant:
-        """Create a new tenant account."""
         tenant = Tenant(
             company_name=company_name,
             industry=industry,
@@ -58,7 +87,6 @@ class TenantAwareDB:
         return tenant
 
     def get_tenant(self, tenant_id: uuid.UUID) -> Optional[Tenant]:
-        """Retrieve tenant metadata by ID."""
         return (
             self.session.query(Tenant)
             .filter(Tenant.tenant_id == tenant_id)
@@ -66,7 +94,6 @@ class TenantAwareDB:
         )
 
     def get_tenant_by_name(self, company_name: str) -> Optional[Tenant]:
-        """Retrieve tenant metadata by company name."""
         return (
             self.session.query(Tenant)
             .filter(Tenant.company_name == company_name)
@@ -83,7 +110,6 @@ class TenantAwareDB:
         active_channels: dict,
         custom_instructions: Optional[str] = None,
     ) -> TenantConfig:
-        """Set or update tenant configuration."""
         config = (
             self.session.query(TenantConfig)
             .filter(TenantConfig.tenant_id == tenant_id)
@@ -105,7 +131,6 @@ class TenantAwareDB:
     def get_tenant_config(
         self, tenant_id: uuid.UUID
     ) -> Optional[TenantConfig]:
-        """Retrieve tenant configuration (tenant-isolated)."""
         return (
             self.session.query(TenantConfig)
             .filter(TenantConfig.tenant_id == tenant_id)
@@ -121,7 +146,6 @@ class TenantAwareDB:
         source_name: str,
         source_uri: str,
     ) -> KnowledgeSource:
-        """Register a new knowledge source for a tenant."""
         source = KnowledgeSource(
             tenant_id=tenant_id,
             source_type=source_type,
@@ -136,10 +160,6 @@ class TenantAwareDB:
     def get_tenant_knowledge_sources(
         self, tenant_id: uuid.UUID, sync_status: Optional[str] = None
     ) -> List[KnowledgeSource]:
-        """
-        Retrieve knowledge sources for a tenant (tenant-isolated).
-        Optionally filter by sync status.
-        """
         query = self.session.query(KnowledgeSource).filter(
             KnowledgeSource.tenant_id == tenant_id
         )
@@ -154,7 +174,6 @@ class TenantAwareDB:
         sync_status: str,
         chunk_count: int = 0,
     ):
-        """Update the sync status of a knowledge source (with tenant check)."""
         source = (
             self.session.query(KnowledgeSource)
             .filter(
@@ -180,22 +199,46 @@ class TenantAwareDB:
         metadata: Optional[dict] = None,
         embedding_vector: Optional[str] = None,
     ) -> VectorEmbedding:
-        """Add a new vector embedding chunk (tenant-isolated)."""
+        """Add a single embedding (prefer batch for bulk ingest)."""
         embedding = VectorEmbedding(
             tenant_id=tenant_id,
             source_id=source_id,
             content_payload=content_payload,
-            metadata=metadata,
+            embedding_metadata=metadata,
             embedding_vector=embedding_vector,
         )
         self.session.add(embedding)
         self.session.commit()
         return embedding
 
+    def add_vector_embeddings_batch(
+        self, records: Iterable[Dict[str, Any]]
+    ) -> int:
+        """
+        Insert many embeddings in one transaction.
+
+        Each record keys: tenant_id, source_id, content_payload,
+        optional metadata / embedding_metadata, optional embedding_vector.
+        """
+        count = 0
+        for rec in records:
+            emb = VectorEmbedding(
+                tenant_id=rec["tenant_id"],
+                source_id=rec.get("source_id"),
+                content_payload=rec["content_payload"],
+                embedding_metadata=rec.get("metadata")
+                or rec.get("embedding_metadata"),
+                embedding_vector=rec.get("embedding_vector"),
+            )
+            self.session.add(emb)
+            count += 1
+        if count:
+            self.session.commit()
+        return count
+
     def get_tenant_embeddings(
         self, tenant_id: uuid.UUID
     ) -> List[VectorEmbedding]:
-        """Retrieve all embeddings for a tenant (tenant-isolated)."""
         return (
             self.session.query(VectorEmbedding)
             .filter(VectorEmbedding.tenant_id == tenant_id)
@@ -205,10 +248,6 @@ class TenantAwareDB:
     def get_embeddings_by_source(
         self, source_id: uuid.UUID, tenant_id: uuid.UUID
     ) -> List[VectorEmbedding]:
-        """Retrieve embeddings for a specific source within a tenant.
-
-        Double-filtered for safety.
-        """
         return (
             self.session.query(VectorEmbedding)
             .filter(
@@ -230,7 +269,6 @@ class TenantAwareDB:
         escalated: bool = False,
         escalation_reason: Optional[str] = None,
     ) -> InteractionLog:
-        """Log a customer interaction (tenant-isolated)."""
         log = InteractionLog(
             tenant_id=tenant_id,
             customer_id=customer_id,
@@ -247,7 +285,6 @@ class TenantAwareDB:
     def get_tenant_interactions(
         self, tenant_id: uuid.UUID, limit: int = 100
     ) -> List[InteractionLog]:
-        """Retrieve recent interactions for a tenant (tenant-isolated)."""
         return (
             self.session.query(InteractionLog)
             .filter(InteractionLog.tenant_id == tenant_id)
@@ -259,7 +296,6 @@ class TenantAwareDB:
     def get_customer_interactions(
         self, tenant_id: uuid.UUID, customer_id: str
     ) -> List[InteractionLog]:
-        """Retrieve all interactions for a specific customer within a tenant (double-filtered)."""
         return (
             self.session.query(InteractionLog)
             .filter(
@@ -280,21 +316,26 @@ def get_db_session():
         with get_db_session() as db:
             config = db.get_tenant_config(tenant_id)
     """
+    _, SessionLocal = _get_engine_and_session_factory()
     session = SessionLocal()
     try:
         yield TenantAwareDB(session)
+    except Exception:
+        session.rollback()
+        raise
     finally:
         session.close()
 
 
 def initialize_database():
     """Create all tables if they don't exist."""
-    create_all_tables(engine)
+    ensure_tables()
     print("[OK] Database tables initialized.")
 
 
-# Auto-initialize tables on import
-try:
-    initialize_database()
-except Exception as e:
-    print(f"[Warning] Database initialization warning: {e}")
+# Optional auto-init only when explicitly requested (edge-friendly default: off)
+if os.getenv("WEAVER_AUTO_INIT_DB", "").lower() in ("1", "true", "yes"):
+    try:
+        ensure_tables()
+    except Exception as e:
+        logger.warning("Database auto-init skipped: %s", e)

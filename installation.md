@@ -1,59 +1,98 @@
-# Installation Guide - Weaver
+# Installation Guide — Weaver
 
-Follow the instructions below to install Weaver on your operating system.
+Follow the instructions for your OS. Weaver runs on **Windows**, **Linux**, and **macOS** for development; production edge remains **RPi 5 16GB + Hailo-10H**.
 
-## Linux Installation
+Hybrid stack: installs **Coastal-Alpine-Core** automatically (SecurityGuard, Telemetry, SovereignOllamaClient). Optional companion: [Aether](https://github.com/fivepanelhat/Aether).
 
-### Option 1: Automated Setup (Recommended)
-Run the bootstrap script, which creates the virtual environment, configures environment files, upgrades pip, and installs all dependencies:
-```bash
-python3 bootstrap.py
-```
-
-### Option 2: Manual Setup
-If you prefer to perform the setup steps manually:
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/fivepanelhat/Weaver.git
-   cd Weaver
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-3. Upgrade pip and install dependencies:
-   ```bash
-   pip install --upgrade pip
-   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
-   pip install -r requirements-dev.txt
-   ```
+Prerequisites: [setup.md](setup.md).
 
 ---
 
-## Windows Installation
+## Linux / macOS
 
-### Option 1: Automated Setup (Recommended)
-Run the bootstrap script in PowerShell or Command Prompt:
-```powershell
-python bootstrap.py
+### Option 1: One-line installer (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.sh | bash
 ```
 
-### Option 2: Manual Setup
-If you prefer to perform the setup steps manually:
-1. Clone the repository:
-   ```powershell
-   git clone https://github.com/fivepanelhat/Weaver.git
-   cd Weaver
-   ```
-2. Create and activate a virtual environment:
-   ```powershell
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-3. Upgrade pip and install dependencies:
-   ```powershell
-   python -m pip install --upgrade pip
-   pip install git+https://github.com/fivepanelhat/coastal-alpine-core.git@v0.2.0
-   pip install -r requirements-dev.txt
-   ```
+### Option 2: Bootstrap from clone
+
+```bash
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+python3 bootstrap.py
+source venv/bin/activate
+```
+
+### Option 3: Manual setup
+
+```bash
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+python3 -m venv venv
+source venv/bin/activate
+pip install -U pip
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+cp .env.example .env
+ollama pull gemma4:e4b
+python demo.py
+```
+
+---
+
+## Windows
+
+### Option 1: One-line installer (recommended)
+
+```powershell
+irm https://raw.githubusercontent.com/fivepanelhat/Weaver/main/install.ps1 | iex
+```
+
+### Option 2: Bootstrap from clone
+
+```powershell
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+python bootstrap.py
+.\venv\Scripts\Activate.ps1
+```
+
+### Option 3: Manual setup
+
+```powershell
+git clone https://github.com/fivepanelhat/Weaver.git
+cd Weaver
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install -U pip
+pip install "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4"
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+Copy-Item .env.example .env
+ollama pull gemma4:e4b
+python demo.py
+```
+
+> If activation fails: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+---
+
+## Validate
+
+```bash
+pytest
+python demo.py
+```
+
+---
+
+## Next: hybrid stack
+
+| Component | Purpose |
+| :--- | :--- |
+| [Coastal-Alpine-Core](https://github.com/fivepanelhat/Coastal-Alpine-Core) | Shared SDK already installed as a dependency |
+| [Aether](https://github.com/fivepanelhat/Aether) | Agentic companion, skills, computer use |
+| [coastal-alpine-stack](https://github.com/fivepanelhat/coastal-alpine-stack) | Full monorepo (portals, MQTT, K3s) |

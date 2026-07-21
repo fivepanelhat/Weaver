@@ -1,3 +1,4 @@
+import heapq
 import json
 import uuid
 import math
@@ -94,14 +95,14 @@ class InMemoryKnowledgeBaseClient(KnowledgeBaseClient):
             score = cosine_similarity(query_vector, chunk["vector"])
             candidates.append((score, chunk))
 
-        candidates.sort(key=lambda item: item[0], reverse=True)
+        top = heapq.nlargest(top_k, candidates, key=lambda item: item[0])
         return [
             {
                 "content": chunk["content"],
                 "metadata": chunk["metadata"],
                 "score": score,
             }
-            for score, chunk in candidates[:top_k]
+            for score, chunk in top
         ]
 
 
@@ -115,11 +116,7 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
     def add_document(
         self, tenant_id: str, content: str, metadata: Dict[str, Any] = None
     ) -> None:
-        source_id = (
-            getattr(metadata, "source_id", None) or metadata.get("source_id")
-            if metadata
-            else None
-        )
+        source_id = metadata.get("source_id") if metadata else None
 
         # If embedder supports batch embed_and_store (sovereign engines), use
         # it
@@ -134,21 +131,34 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
                 }
             ]
             ready_records = self.embedder.embed_and_store(processed_chunks)
+            batch: List[Dict[str, Any]] = []
             for rec in ready_records:
-                # rec may contain embedding as list
                 embedding_vec = rec.get("embedding")
                 serialized = (
                     serialize_embedding(embedding_vec)
                     if embedding_vec is not None
                     else None
                 )
-                self.db.add_vector_embedding(
-                    tenant_id=tenant_id,
-                    source_id=rec.get("source_id") or source_id,
-                    content_payload=rec.get("content_payload") or content,
-                    metadata=rec.get("metadata", {}) or (metadata or {}),
-                    embedding_vector=serialized,
+                batch.append(
+                    {
+                        "tenant_id": tenant_id,
+                        "source_id": rec.get("source_id") or source_id,
+                        "content_payload": rec.get("content_payload") or content,
+                        "metadata": rec.get("metadata", {}) or (metadata or {}),
+                        "embedding_vector": serialized,
+                    }
                 )
+            if hasattr(self.db, "add_vector_embeddings_batch"):
+                self.db.add_vector_embeddings_batch(batch)
+            else:
+                for rec in batch:
+                    self.db.add_vector_embedding(
+                        tenant_id=rec["tenant_id"],
+                        source_id=rec.get("source_id"),
+                        content_payload=rec["content_payload"],
+                        metadata=rec.get("metadata"),
+                        embedding_vector=rec.get("embedding_vector"),
+                    )
             return
 
         # Fallback: single-item embed
@@ -160,6 +170,48 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
             embedding_vector=serialize_embedding(self.embedder.embed(content)),
         )
 
+    def add_documents_batch(
+        self,
+        tenant_id: str,
+        chunks: List[Dict[str, Any]],
+    ) -> int:
+        """
+        Embed and store many chunks with a single DB transaction when supported.
+
+        Each chunk: {"content": str, "metadata": dict?, "source_id": ...?}
+        """
+        if not chunks:
+            return 0
+
+        records_for_db: List[Dict[str, Any]] = []
+        for ch in chunks:
+            content = ch.get("content") or ch.get("content_payload") or ""
+            meta = ch.get("metadata") or {}
+            source_id = ch.get("source_id") or meta.get("source_id")
+            emb = self.embedder.embed(content)
+            records_for_db.append(
+                {
+                    "tenant_id": tenant_id,
+                    "source_id": source_id,
+                    "content_payload": content,
+                    "metadata": meta,
+                    "embedding_vector": serialize_embedding(emb),
+                }
+            )
+
+        if hasattr(self.db, "add_vector_embeddings_batch"):
+            return self.db.add_vector_embeddings_batch(records_for_db)
+
+        for rec in records_for_db:
+            self.db.add_vector_embedding(
+                tenant_id=rec["tenant_id"],
+                source_id=rec.get("source_id"),
+                content_payload=rec["content_payload"],
+                metadata=rec.get("metadata"),
+                embedding_vector=rec.get("embedding_vector"),
+            )
+        return len(records_for_db)
+
     def query(
         self, text: str, tenant_id: str, top_k: int = 5
     ) -> List[Dict[str, Any]]:
@@ -167,19 +219,21 @@ class SqlAlchemyKnowledgeBaseClient(KnowledgeBaseClient):
         rows = self.db.get_tenant_embeddings(tenant_id)
         scored: List[Tuple[float, VectorEmbedding]] = []
 
+        # Single-pass score; avoid re-deserializing in sort key
         for row in rows:
             embedding = deserialize_embedding(row.embedding_vector)
             if embedding is None:
                 continue
             score = cosine_similarity(query_vector, embedding)
-            scored.append((score, row))
+            if score > 0:
+                scored.append((score, row))
 
-        scored.sort(key=lambda item: item[0], reverse=True)
+        top = heapq.nlargest(top_k, scored, key=lambda item: item[0])
         return [
             {
                 "content": row.content_payload,
                 "metadata": row.embedding_metadata,
                 "score": score,
             }
-            for score, row in scored[:top_k]
+            for score, row in top
         ]

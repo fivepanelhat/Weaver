@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "weaver"
-dynamic = ["version"]
+version = "0.1.0"
 authors = [
   { name="Wayne Roberts", email="architecture@coastalalpinetech.local" },
 ]
@@ -18,9 +18,11 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "langchain-text-splitters>=1.1.2,<2.0.0",
     "langchain-community>=0.4.2,<1.0.0",
-    "langgraph>=0.2.0,<1.0.0",
+    "langgraph>=1.2.9",
+    "langsmith>=0.8.18",
+    "pydantic-settings>=2.14.2",
     "paho-mqtt>=1.6.1",
-    "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git",
+    "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5",
 ]
 
 [project.optional-dependencies]
@@ -34,7 +36,14 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["weaver*", "agents*", "orchestrator*", "knowledge_base*", "database*", "models*"]
+include = [
+    "weaver_graph*",
+    "agents*",
+    "orchestrator*",
+    "knowledge_base*",
+    "database*",
+    "models*",
+]
 
 [tool.ruff]
 line-length = 100
