@@ -1,6 +1,12 @@
 # Weaver: AI-Native Multi-Tenant Agentic Mesh
 
 [![Privacy](https://img.shields.io/badge/Privacy-Local--first%20%2B%20Privacy%20Act%202020-00247D)](./COMPLIANCE.md)
+[![No data sold](https://img.shields.io/badge/Data-Not%20sold%20to%20third%20parties-0f766e)](./COMPLIANCE.md)
+[![NZ Privacy Act](https://img.shields.io/badge/NZ-Privacy%20Act%202020-00247D)](./COMPLIANCE.md)
+[![Te Mana Raraunga](https://img.shields.io/badge/Te%20Mana%20Raraunga-In%20accordance-0f766e)](./COMPLIANCE.md)
+[![NZ AI Safety](https://img.shields.io/badge/NZ%20AI%20Safety-Aligned-8B5CF6)](./COMPLIANCE.md)
+[![SOC2](https://img.shields.io/badge/SOC%202-Alignment%20path-6366f1)](./COMPLIANCE_REGIONS.md)
+[![Regions](https://img.shields.io/badge/AU%20%7C%20Asia%20%7C%20EU-Mapped-0ea5e9)](./COMPLIANCE_REGIONS.md)
 [![Security](https://img.shields.io/badge/Security-No%20silent%20exfil%20%2B%20SecOps-dc2626)](./SECURITY.md)
 [![Governance](https://img.shields.io/badge/Governance-HITL%20%2B%20Te%20Mana%20Raraunga-0f766e)](./COMPLIANCE.md)
 
@@ -26,15 +32,26 @@ Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.gith
 
 Coastal Alpine Tech products treat operational and personal data as **taonga**. Defaults favour **local-first** operation, **purpose-limited** collection, and **Human-in-the-Loop** for high-stakes actions.
 
+### Hard commitments
+
+| Commitment | Statement |
+| :--- | :--- |
+| **No data sales** | **We do not sell personal information or customer operational data to third parties** for advertising, brokerage, or unrelated commercial exploitation. |
+| **NZ Privacy Act 2020** | Collection, use, storage, and disclosure of personal information is designed to operate in accordance with the **Privacy Act 2020** information privacy principles (including IPP awareness and IPP 3A indirect-collection notification where applicable). |
+| **Te Mana Raraunga** | Where Māori data or community data interests arise, systems are designed to operate **in accordance with Te Mana Raraunga** principles (including Rangatiratanga, Whakapapa, Whanaungatanga, Kotahitanga, Manaakitanga, Kaitiakitanga) as a sovereignty and stewardship lens — not as a marketing slogan. |
+| **NZ AI safety** | AI features follow a **NZ AI safety-aligned** posture: Algorithm Charter spirit (fairness, transparency, human oversight where relevant), digital.govt.nz / responsible AI guidance awareness, no silent model training on private journals without consent, and HITL for high-stakes outcomes. |
+| **Security** | No silent exfiltration; owner-controlled credentials; least privilege; SecOps / dependency hygiene on the fleet cadence. |
+| **Governance** | Agents **inform, draft, prepare**; humans **advise, sign, file, send, and pay**. |
+
 | Pillar | Commitment |
 | :--- | :--- |
-| **Privacy** | Local-first / offline-capable where practical; Privacy Act 2020 awareness; cloud and third-party AI only when **opt-in and labelled** |
-| **Security** | No silent exfiltration of tenant or personal data; owner-controlled keys; SecOps / dependency hygiene on the fleet cadence |
-| **Governance** | Agents **inform, draft, prepare**; humans **advise, sign, file, send, and pay**. Te Mana Raraunga spirit for Māori data sovereignty |
+| **Privacy** | Local-first / offline-capable where practical; Privacy Act 2020; Te Mana Raraunga spirit; third-party AI only when **opt-in and labelled** |
+| **Security** | No silent exfil of tenant or personal data; owner-controlled keys |
+| **Governance** | HITL for high-stakes; Te Mana Raraunga spirit; multi-region compliance maps in [`COMPLIANCE_REGIONS.md`](./COMPLIANCE_REGIONS.md) |
 
 **Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.**
 
-Fleet policy: [fivepanelhat / Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat) · Product detail: [`COMPLIANCE.md`](./COMPLIANCE.md) · [`SECURITY.md`](./SECURITY.md) (where present) · [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md) (where present)
+Fleet policy: [fivepanelhat / Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat) · [`COMPLIANCE.md`](./COMPLIANCE.md) · [`COMPLIANCE_REGIONS.md`](./COMPLIANCE_REGIONS.md) · [`SECURITY.md`](./SECURITY.md)
 <!-- END PRIVACY_SECURITY_GOVERNANCE -->
 
 
