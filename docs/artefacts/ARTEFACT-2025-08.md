@@ -181,3 +181,11 @@ These documents are cited so the August R&D line can be traced across product, f
 ---
 
 *Generated as an internal R&D acknowledgement index from Google Drive document metadata and readable content. Stay grounded: themes above reflect wording and structure present in the cited sources.*
+
+---
+
+## Publication locations
+
+- **GitHub (canonical):** https://github.com/fivepanelhat/fivepanelhat/tree/main/docs/artefacts
+- **Google Drive:** https://drive.google.com/drive/folders/1opA269pqIPsiAe3ntxuKY2ocRW4UKy_4
+
