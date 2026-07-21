@@ -3,6 +3,16 @@
 **Coastal Alpine Tech Limited** | **Product:** Weaver
 Last updated: 19 July 2026
 
+## Privacy · Security · Governance (fleet mandatory)
+
+| Pillar | Standard |
+| --- | --- |
+| **Privacy** | Local-first default; purpose-limited collection; Privacy Act 2020; Te Mana Raraunga spirit; third-party processing only when opt-in and disclosed |
+| **Security** | No silent exfil; owner-controlled credentials; least privilege; SecOps / red-team cadence where CI is present |
+| **Governance** | HITL for high-stakes; agents draft only; humans sign / send / pay |
+
+Last reviewed (fleet block): 2026-07-21
+
 > Super Grok compliance briefing (19 July 2026). This is **alignment evidence**, not a compliance certificate or legal advice.
 
 ## Regulatory Mapping

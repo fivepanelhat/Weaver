@@ -42,3 +42,11 @@ Report via private GitHub Security Advisory or the Chief Architect. Include tena
 
 - CI: install Core + requirements, flake8, pytest.
 - SecOps + red-team scheduled workflows.
+
+## Fleet security principles
+
+- **No silent exfiltration** of personal or tenant operational data
+- Prefer **local-first** processing; third-party AI only with explicit operator configuration and UI/docs disclosure
+- Report vulnerabilities via GitHub Security Advisories or the maintainer contact on the org profile
+- High-stakes production changes require human approval (HITL)
+

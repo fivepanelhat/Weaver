@@ -1,5 +1,10 @@
 # Weaver: AI-Native Multi-Tenant Agentic Mesh
 
+[![Privacy](https://img.shields.io/badge/Privacy-Local--first%20%2B%20Privacy%20Act%202020-00247D)](./COMPLIANCE.md)
+[![Security](https://img.shields.io/badge/Security-No%20silent%20exfil%20%2B%20SecOps-dc2626)](./SECURITY.md)
+[![Governance](https://img.shields.io/badge/Governance-HITL%20%2B%20Te%20Mana%20Raraunga-0f766e)](./COMPLIANCE.md)
+
+
 <!-- BEGIN CAT_CONGRUENCE_SNIPPET -->
 ## Coastal Alpine Tech portfolio
 
@@ -15,6 +20,23 @@
 **Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.** 
 Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.github/agent-fleet/anti-hallucination.md) | Congruence: [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md)
 <!-- END CAT_CONGRUENCE_SNIPPET -->
+
+<!-- BEGIN PRIVACY_SECURITY_GOVERNANCE -->
+## Privacy · Security · Governance
+
+Coastal Alpine Tech products treat operational and personal data as **taonga**. Defaults favour **local-first** operation, **purpose-limited** collection, and **Human-in-the-Loop** for high-stakes actions.
+
+| Pillar | Commitment |
+| :--- | :--- |
+| **Privacy** | Local-first / offline-capable where practical; Privacy Act 2020 awareness; cloud and third-party AI only when **opt-in and labelled** |
+| **Security** | No silent exfiltration of tenant or personal data; owner-controlled keys; SecOps / dependency hygiene on the fleet cadence |
+| **Governance** | Agents **inform, draft, prepare**; humans **advise, sign, file, send, and pay**. Te Mana Raraunga spirit for Māori data sovereignty |
+
+**Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.**
+
+Fleet policy: [fivepanelhat / Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat) · Product detail: [`COMPLIANCE.md`](./COMPLIANCE.md) · [`SECURITY.md`](./SECURITY.md) (where present) · [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md) (where present)
+<!-- END PRIVACY_SECURITY_GOVERNANCE -->
+
 
 <!-- BEGIN PROBLEMS_SOLUTIONS_ECONOMY -->
 ## Problems we are solving
