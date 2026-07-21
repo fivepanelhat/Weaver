@@ -22,7 +22,7 @@ Anti-hallucination policy: [`.github/agent-fleet/anti-hallucination.md`](./.gith
 <!-- END CAT_CONGRUENCE_SNIPPET -->
 
 <!-- BEGIN PRIVACY_SECURITY_GOVERNANCE -->
-## Privacy · Security · Governance
+## Privacy / Security / Governance
 
 Coastal Alpine Tech products treat operational and personal data as **taonga**. Defaults favour **local-first** operation, **purpose-limited** collection, and **Human-in-the-Loop** for high-stakes actions.
 
