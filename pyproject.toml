@@ -18,19 +18,19 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "langchain-text-splitters>=1.1.2,<2.0.0",
     "langchain-community>=0.4.2,<1.0.0",
-    "langgraph>=1.0.10",
+    "langgraph>=1.2.9",
     "langsmith>=0.8.18",
     "pydantic-settings>=2.14.2",
-    "paho-mqtt>=1.6.1",
+    "paho-mqtt>=2.1.0",
     "coastal-alpine-core @ git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.5",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
+    "pytest>=9.1.1",
     "pytest-asyncio>=0.23.0",
-    "black>=24.0.0",
-    "mypy>=1.10.0",
+    "black>=26.5.1",
+    "mypy>=2.3.0",
     "ruff>=0.4.0",
 ]
 

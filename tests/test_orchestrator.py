@@ -136,3 +136,21 @@ def test_llm_fallback_deterministic():
     llm.base_url = "http://127.0.0.1:1"
     llm._core_client = None
     assert "ESCALATE" in llm.invoke("customer is angry and wants safety review").upper()
+
+
+def test_process_message_sanitizes_internal_errors():
+    # A failing agent must not leak internal exception details to the caller.
+    from orchestrator import AgentOrchestrator  # noqa: E402
+
+    class ExplodingAgent:
+        def process_interaction(self, message):
+            raise RuntimeError("secret internal db dsn postgres://user:pw@host/db")
+
+    orch = AgentOrchestrator(tenant_id="tenant-x", use_graph=False)
+    orch.intake_agent = ExplodingAgent()
+
+    result = orch.process_message({"content": "hello"})
+    assert result == {"status": "error", "tenant_id": "tenant-x"}
+    # No internal detail leaked anywhere in the response payload.
+    assert "postgres" not in str(result)
+    assert "RuntimeError" not in str(result)
