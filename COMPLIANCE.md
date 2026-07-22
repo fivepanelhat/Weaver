@@ -1,9 +1,25 @@
 # COMPLIANCE.md
 
 **Coastal Alpine Tech Limited** | **Product:** Weaver
-Last updated: 19 July 2026
+Last updated: 22 July 2026
 
-> Super Grok compliance briefing (19 July 2026). This is **alignment evidence**, not a compliance certificate or legal advice.
+## Privacy / Security / Governance (fleet mandatory)
+
+**Last reviewed (fleet block):** 22 July 2026
+
+| Pillar | Standard |
+| --- | --- |
+| **No data sales** | **Personal and customer operational data is not sold to third parties** for ads, data brokerage, or unrelated monetisation. |
+| **Privacy** | Designed to operate in accordance with the **New Zealand Privacy Act 2020** (IPPs; IPP 3A awareness). Local-first default; purpose-limited collection; third-party processing only when opt-in and disclosed. |
+| **Te Mana Raraunga** | Designed to operate **in accordance with Te Mana Raraunga** Māori data sovereignty principles where Māori / community data interests apply. |
+| **NZ AI safety** | Aligned with NZ AI safety / responsible AI posture: human oversight for high-stakes use, transparency of AI processing, Algorithm Charter spirit, no silent training on private customer content without consent. |
+| **Security** | No silent exfil; owner-controlled credentials; least privilege; SecOps / red-team cadence where CI is present. |
+| **Governance** | HITL for high-stakes; agents draft only; humans sign / send / pay. |
+| **Assurance path** | **SOC 2** Type I/II and **ISO/IEC 42001** treated as multi-tenant SaaS **alignment targets**, not claimed certifications unless a formal report is published. |
+| **Regions** | Australia, Asia-Pacific, and European frameworks mapped in [`COMPLIANCE_REGIONS.md`](./COMPLIANCE_REGIONS.md) under a **NZ AI safety-first** baseline. |
+
+> This document is **alignment evidence**, not a compliance certificate, audit report, or legal advice.
+
 
 ## Regulatory Mapping
 
@@ -79,3 +95,7 @@ For New Zealand public sector organisations, local councils, and public services
 * **Te Mana o te Raraunga:** Personal information, oral history files, and customary land registry data vectorized for RAG systems represent digital expressions of *whakapapa* and *taonga*.
 * **Local Guardianship:** Weaver is compiled and deployed locally in New Plymouth, Taranaki. By avoiding offshore clouds (such as AWS, GCP, or Azure), iwi trust entities retain custody of their digital records on their own physical *whenua* (land).
 * **Consent Controls:** Tenant configurations allow administrators to restrict RAG vector indexing to certified internal models, ensuring information remains protected under customary authority boundaries.
+
+### Data sales
+
+**We do not sell personal or customer operational data to third parties.**
