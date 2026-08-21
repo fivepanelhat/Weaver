@@ -150,7 +150,10 @@ def test_process_message_sanitizes_internal_errors():
     orch.intake_agent = ExplodingAgent()
 
     result = orch.process_message({"content": "hello"})
-    assert result == {"status": "error", "tenant_id": "tenant-x"}
+    assert result["status"] == "error"
+    assert result["tenant_id"] == "tenant-x"
+    # Sprint A: session_id is returned for HITL correlation (not a secret).
+    assert "session_id" in result and result["session_id"]
     # No internal detail leaked anywhere in the response payload.
     assert "postgres" not in str(result)
     assert "RuntimeError" not in str(result)

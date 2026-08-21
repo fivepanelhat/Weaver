@@ -10,6 +10,11 @@
 
 All notable changes to the `weaver` repository will be documented in this file.
 
+## [Unreleased] — Sprint A Phase 1 (2026-08-21)
+
+### Added
+- **SessionEvent instrumentation** on `AgentOrchestrator`: emits Core `SessionEventStore` events (`prompt_received`, `security_check`, `blocked`, `agent_step`, `escalation`, `session_end`, `error`) with `session_id` + `tenant_id`. Optional `event_store` inject for tests. Dependency pin to Core `feat/sprint-a-session-events` (→ `v0.5.7` after Core PR merge).
+
 ## [0.1.0] - 2026-07-13 — First public release
 
 First tagged, public release of Weaver. This `0.1.0` marks the start of
@@ -31,7 +36,7 @@ were **internal pre-release iterations** and are retained for history.
 
 ### Changed for release
 - Removed orphaned industrial edge-fleet modules (`src/`: MQTT black-box
-  logger, fleet policy, OPC-UA bridge, TPM attestation) that did not belong
+  logger, battery policy, OPC-UA bridge, TPM attestation) that did not belong
   to the helpdesk product; they remain in git history.
 - Dockerfile entrypoint now runs the helpdesk demo instead of the removed
   black-box logger.
