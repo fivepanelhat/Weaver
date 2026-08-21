@@ -48,7 +48,8 @@ class AgentOrchestrator:
     Wraps IntakeAgent with security + telemetry. Optionally exposes the
     weaver_graph helpdesk state machine for graph-based routing.
     Emits SessionEvents (Core 0.5.7+) for HITL audit and Trajectories
-    (Core 0.5.9+) for DataFlywheel outcome samples.
+    (Core 0.5.9+) for DataFlywheel outcome samples. Optional llm_call
+    events when the LLM client supports bind_session.
     """
 
     def __init__(
@@ -96,6 +97,21 @@ class AgentOrchestrator:
             or uuid.uuid4()
         )
 
+    def _bind_llm_session(self, session_id: str) -> None:
+        llm = self.llm
+        if llm is None:
+            return
+        binder = getattr(llm, "bind_session", None)
+        if callable(binder):
+            try:
+                binder(
+                    session_id=session_id,
+                    event_store=self.event_store,
+                    tenant_id=self.tenant_id,
+                )
+            except Exception as exc:
+                logger.debug("LLM bind_session failed: %s", exc)
+
     def _record_trajectory(
         self,
         *,
@@ -122,15 +138,12 @@ class AgentOrchestrator:
             logger.debug("Trajectory record failed: %s", exc)
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        # Security gate first — never run agents on unsafe prompts.
-        # Guard the actual user-supplied text, not str(message): the dict
-        # repr escapes unicode, so a zero-width char used to obfuscate an
-        # injection becomes a literal backslash-u200b and slips past the
-        # guard's normalization. Check the raw content field instead.
         session_id = self._session_id_from_message(message)
         user_text = message.get("content") or message.get("user_message") or ""
         if not isinstance(user_text, str):
             user_text = str(user_text)
+
+        self._bind_llm_session(session_id)
 
         self.event_store.emit(
             session_id=session_id,
@@ -207,9 +220,6 @@ class AgentOrchestrator:
             )
             return result
         except Exception:
-            # Diamond: log the full error server-side, return a sanitized status.
-            # Tenant ID is not sensitive data and helps callers correlate errors;
-            # exception details and stack traces never leak.
             logger.exception(
                 "orchestrator_process_message failed for tenant %s", self.tenant_id
             )

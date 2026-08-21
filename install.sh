@@ -13,7 +13,7 @@ set -euo pipefail
 REPO_URL="${WEAVER_REPO_URL:-https://github.com/fivepanelhat/Weaver.git}"
 INSTALL_DIR="${WEAVER_HOME:-$HOME/.weaver-app}"
 VENV_DIR="$INSTALL_DIR/venv"
-CORE_GIT="${CORE_GIT_URL:-git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4}"
+CORE_GIT="${CORE_GIT_URL:-git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.9}"
 
 info() { printf '\033[36m[weaver]\033[0m %s\n' "$1"; }
 warn() { printf '\033[33m[weaver]\033[0m %s\n' "$1"; }
