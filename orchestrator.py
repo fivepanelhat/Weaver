@@ -5,12 +5,13 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 from agents import IntakeAgent
 from coastal_alpine_core.security import SecurityGuard
 from coastal_alpine_core.session_events import SessionEventStore
 from coastal_alpine_core.telemetry import TelemetryTracker
+from skill_graph_bridge import SkillGraphBridge
 
 try:
     from coastal_alpine_core import record_session_trajectory  # Core ≥0.5.9
@@ -50,12 +51,9 @@ class AgentOrchestrator:
     """
     Production entrypoint for multi-tenant helpdesk messages.
 
-    Wraps IntakeAgent with security + telemetry. Optionally exposes the
-    weaver_graph helpdesk state machine for graph-based routing.
-    Emits SessionEvents (Core 0.5.7+) for HITL audit and Trajectories
-    (Core 0.5.9+) for DataFlywheel outcome samples. Optional llm_call
-    events when the LLM client supports bind_session.
-    Optional ConfigOverlay (Core 0.5.10+) for tenant/session stacked config.
+    Soft Core seams:
+    - SessionEvents / Trajectories / ConfigOverlay
+    - SkillGraphBridge (depends_on topological load order, Core ≥0.5.10)
     """
 
     def __init__(
@@ -70,6 +68,7 @@ class AgentOrchestrator:
         flywheel_path: Optional[str] = None,
         config_overlay: Any = None,
         llm_profile: str = "edge-default",
+        skill_catalog: Optional[Mapping[str, Mapping[str, Any]]] = None,
     ):
         self.tenant_id = tenant_id
         self.tenant_config = tenant_config or {}
@@ -100,9 +99,10 @@ class AgentOrchestrator:
                     "edge-fast", {"llm": {"profile": "edge-fast"}}
                 )
                 self.config_overlay.use_profile(
-                    llm_profile if llm_profile in ("edge-default", "edge-fast") else "edge-default"
+                    llm_profile
+                    if llm_profile in ("edge-default", "edge-fast")
+                    else "edge-default"
                 )
-                # Tenant overlay: only non-secret structural keys
                 safe_tenant = {
                     k: v
                     for k, v in self.tenant_config.items()
@@ -117,9 +117,16 @@ class AgentOrchestrator:
                 }
                 if safe_tenant:
                     self.config_overlay.set_tenant(safe_tenant)
-            except Exception as exc:
-                logger.debug("ConfigOverlay init failed: %s", exc)
+            except Exception as exp:
+                logger.debug("ConfigOverlay init failed: %s", exp)
                 self.config_overlay = None
+
+        self.skill_graph = SkillGraphBridge(skill_catalog)
+        if skill_catalog:
+            try:
+                self.skill_graph.resolve()
+            except Exception as exp:
+                logger.debug("initial skill resolve failed: %s", exp)
 
         self.intake_agent = IntakeAgent(
             self.knowledge_base_client,
@@ -128,6 +135,16 @@ class AgentOrchestrator:
             tenant_config=self.tenant_config,
         )
         self._graph = None
+
+    def register_skill(
+        self, name: str, meta: Optional[Mapping[str, Any]] = None
+    ) -> None:
+        self.skill_graph.register(name, meta)
+
+    def resolve_skills(
+        self, required: Optional[Iterable[str]] = None
+    ) -> List[str]:
+        return self.skill_graph.resolve(required=required)
 
     def resolved_config(self) -> Dict[str, Any]:
         if self.config_overlay is None:
@@ -166,8 +183,8 @@ class AgentOrchestrator:
                     "use_graph": self.use_graph,
                 }
             )
-        except Exception as exc:
-            logger.debug("session overlay failed: %s", exc)
+        except Exception as exp:
+            logger.debug("session overlay failed: %s", exp)
 
     def _bind_llm_session(self, session_id: str) -> None:
         llm = self.llm
@@ -181,8 +198,8 @@ class AgentOrchestrator:
                     event_store=self.event_store,
                     tenant_id=self.tenant_id,
                 )
-            except Exception as exc:
-                logger.debug("LLM bind_session failed: %s", exc)
+            except Exception as exp:
+                logger.debug("LLM bind_session failed: %s", exp)
 
     def _record_trajectory(
         self,
@@ -206,8 +223,8 @@ class AgentOrchestrator:
                 tenant_id=self.tenant_id,
                 storage_path=self.flywheel_path,
             )
-        except Exception as exc:
-            logger.debug("Trajectory record failed: %s", exc)
+        except Exception as exp:
+            logger.debug("Trajectory record failed: %s", exp)
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         session_id = self._session_id_from_message(message)
@@ -273,9 +290,7 @@ class AgentOrchestrator:
                 result = self.intake_agent.process_interaction(message)
             if isinstance(result, dict):
                 result = {**result, "session_id": session_id}
-            status = (
-                result.get("status") if isinstance(result, dict) else "ok"
-            )
+            status = result.get("status") if isinstance(result, dict) else "ok"
             self.event_store.emit(
                 session_id=session_id,
                 event_type="session_end",
