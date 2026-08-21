@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 import uuid
 from typing import Any, Dict, Optional
 
@@ -10,6 +11,11 @@ from agents import IntakeAgent
 from coastal_alpine_core.security import SecurityGuard
 from coastal_alpine_core.session_events import SessionEventStore
 from coastal_alpine_core.telemetry import TelemetryTracker
+
+try:
+    from coastal_alpine_core import record_session_trajectory  # Core ≥0.5.9
+except ImportError:  # pragma: no cover
+    record_session_trajectory = None  # type: ignore
 
 logger = logging.getLogger("weaver.orchestrator")
 
@@ -41,7 +47,8 @@ class AgentOrchestrator:
 
     Wraps IntakeAgent with security + telemetry. Optionally exposes the
     weaver_graph helpdesk state machine for graph-based routing.
-    Emits SessionEvents (Core 0.5.7+) for HITL / Trajectory audit.
+    Emits SessionEvents (Core 0.5.7+) for HITL audit and Trajectories
+    (Core 0.5.9+) for DataFlywheel outcome samples.
     """
 
     def __init__(
@@ -53,6 +60,7 @@ class AgentOrchestrator:
         llm=None,
         use_graph: bool = False,
         event_store: Optional[SessionEventStore] = None,
+        flywheel_path: Optional[str] = None,
     ):
         self.tenant_id = tenant_id
         self.tenant_config = tenant_config or {}
@@ -64,6 +72,7 @@ class AgentOrchestrator:
         self.event_store = event_store or SessionEventStore(
             storage_path=f"session_events_{tenant_id}.jsonl"
         )
+        self.flywheel_path = flywheel_path or f"flywheel_{tenant_id}.jsonl"
         self.intake_agent = IntakeAgent(
             self.knowledge_base_client,
             self.memory_store,
@@ -86,6 +95,31 @@ class AgentOrchestrator:
             or message.get("id")
             or uuid.uuid4()
         )
+
+    def _record_trajectory(
+        self,
+        *,
+        session_id: str,
+        outcome: str,
+        input_summary: str,
+        output_summary: str,
+        latency_seconds: float,
+    ) -> None:
+        if record_session_trajectory is None:
+            return
+        try:
+            record_session_trajectory(
+                session_id=session_id,
+                action="weaver.process_message",
+                outcome=outcome,
+                input_summary=input_summary,
+                output_summary=output_summary,
+                latency_seconds=latency_seconds,
+                tenant_id=self.tenant_id,
+                storage_path=self.flywheel_path,
+            )
+        except Exception as exc:
+            logger.debug("Trajectory record failed: %s", exc)
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         # Security gate first — never run agents on unsafe prompts.
@@ -124,6 +158,13 @@ class AgentOrchestrator:
                 payload={"reason": "security_guard"},
                 outcome="blocked",
             )
+            self._record_trajectory(
+                session_id=session_id,
+                outcome="blocked",
+                input_summary=f"chars={len(user_text)}",
+                output_summary="status=blocked",
+                latency_seconds=0.0,
+            )
             return {
                 "status": "blocked",
                 "tenant_id": self.tenant_id,
@@ -131,6 +172,7 @@ class AgentOrchestrator:
             }
 
         measurement = TelemetryTracker.measure_latency("orchestrator_process_message")
+        t0 = time.perf_counter()
         try:
             if self.use_graph:
                 result = self._process_via_graph(message, session_id=session_id)
@@ -145,17 +187,23 @@ class AgentOrchestrator:
                 result = self.intake_agent.process_interaction(message)
             if isinstance(result, dict):
                 result = {**result, "session_id": session_id}
+            status = (
+                result.get("status") if isinstance(result, dict) else "ok"
+            )
             self.event_store.emit(
                 session_id=session_id,
                 event_type="session_end",
                 actor="orchestrator",
                 tenant_id=self.tenant_id,
-                payload={
-                    "status": result.get("status")
-                    if isinstance(result, dict)
-                    else "ok"
-                },
+                payload={"status": status},
                 outcome="success",
+            )
+            self._record_trajectory(
+                session_id=session_id,
+                outcome="success",
+                input_summary=f"chars={len(user_text)}",
+                output_summary=f"status={status}",
+                latency_seconds=time.perf_counter() - t0,
             )
             return result
         except Exception:
@@ -172,6 +220,13 @@ class AgentOrchestrator:
                 tenant_id=self.tenant_id,
                 payload={"where": "process_message"},
                 outcome="error",
+            )
+            self._record_trajectory(
+                session_id=session_id,
+                outcome="error",
+                input_summary=f"chars={len(user_text)}",
+                output_summary="status=error",
+                latency_seconds=time.perf_counter() - t0,
             )
             return {
                 "status": "error",
