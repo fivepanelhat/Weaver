@@ -17,6 +17,11 @@ try:
 except ImportError:  # pragma: no cover
     record_session_trajectory = None  # type: ignore
 
+try:
+    from coastal_alpine_core import ConfigOverlay  # Core ≥0.5.10
+except ImportError:  # pragma: no cover
+    ConfigOverlay = None  # type: ignore
+
 logger = logging.getLogger("weaver.orchestrator")
 
 
@@ -50,6 +55,7 @@ class AgentOrchestrator:
     Emits SessionEvents (Core 0.5.7+) for HITL audit and Trajectories
     (Core 0.5.9+) for DataFlywheel outcome samples. Optional llm_call
     events when the LLM client supports bind_session.
+    Optional ConfigOverlay (Core 0.5.10+) for tenant/session stacked config.
     """
 
     def __init__(
@@ -62,6 +68,8 @@ class AgentOrchestrator:
         use_graph: bool = False,
         event_store: Optional[SessionEventStore] = None,
         flywheel_path: Optional[str] = None,
+        config_overlay: Any = None,
+        llm_profile: str = "edge-default",
     ):
         self.tenant_id = tenant_id
         self.tenant_config = tenant_config or {}
@@ -69,11 +77,50 @@ class AgentOrchestrator:
         self.memory_store = memory_store or _MemoryStore()
         self.llm = llm
         self.use_graph = use_graph
+        self.llm_profile = llm_profile
         self.security_guard = SecurityGuard()
         self.event_store = event_store or SessionEventStore(
             storage_path=f"session_events_{tenant_id}.jsonl"
         )
         self.flywheel_path = flywheel_path or f"flywheel_{tenant_id}.jsonl"
+        self.config_overlay = config_overlay
+        if self.config_overlay is None and ConfigOverlay is not None:
+            try:
+                self.config_overlay = ConfigOverlay(
+                    defaults={
+                        "llm": {"profile": llm_profile},
+                        "tenant_id": tenant_id,
+                        "use_graph": use_graph,
+                    }
+                )
+                self.config_overlay.register_profile(
+                    "edge-default", {"llm": {"profile": "edge-default"}}
+                )
+                self.config_overlay.register_profile(
+                    "edge-fast", {"llm": {"profile": "edge-fast"}}
+                )
+                self.config_overlay.use_profile(
+                    llm_profile if llm_profile in ("edge-default", "edge-fast") else "edge-default"
+                )
+                # Tenant overlay: only non-secret structural keys
+                safe_tenant = {
+                    k: v
+                    for k, v in self.tenant_config.items()
+                    if k
+                    in (
+                        "brand_voice",
+                        "escalation_rules",
+                        "locale",
+                        "timezone",
+                        "llm_profile",
+                    )
+                }
+                if safe_tenant:
+                    self.config_overlay.set_tenant(safe_tenant)
+            except Exception as exc:
+                logger.debug("ConfigOverlay init failed: %s", exc)
+                self.config_overlay = None
+
         self.intake_agent = IntakeAgent(
             self.knowledge_base_client,
             self.memory_store,
@@ -81,6 +128,18 @@ class AgentOrchestrator:
             tenant_config=self.tenant_config,
         )
         self._graph = None
+
+    def resolved_config(self) -> Dict[str, Any]:
+        if self.config_overlay is None:
+            return {
+                "tenant_id": self.tenant_id,
+                "use_graph": self.use_graph,
+                "llm": {"profile": self.llm_profile},
+            }
+        try:
+            return self.config_overlay.resolve()
+        except Exception:
+            return {"tenant_id": self.tenant_id}
 
     def _get_graph(self):
         if self._graph is None:
@@ -96,6 +155,19 @@ class AgentOrchestrator:
             or message.get("id")
             or uuid.uuid4()
         )
+
+    def _bind_session_overlay(self, session_id: str) -> None:
+        if self.config_overlay is None:
+            return
+        try:
+            self.config_overlay.set_session(
+                {
+                    "session_id": session_id,
+                    "use_graph": self.use_graph,
+                }
+            )
+        except Exception as exc:
+            logger.debug("session overlay failed: %s", exc)
 
     def _bind_llm_session(self, session_id: str) -> None:
         llm = self.llm
@@ -143,6 +215,7 @@ class AgentOrchestrator:
         if not isinstance(user_text, str):
             user_text = str(user_text)
 
+        self._bind_session_overlay(session_id)
         self._bind_llm_session(session_id)
 
         self.event_store.emit(
