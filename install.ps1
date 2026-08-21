@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 $RepoUrl    = if ($env:WEAVER_REPO_URL) { $env:WEAVER_REPO_URL } else { "https://github.com/fivepanelhat/Weaver.git" }
 $InstallDir = if ($env:WEAVER_HOME)     { $env:WEAVER_HOME }     else { Join-Path $env:USERPROFILE ".weaver-app" }
 $VenvDir    = Join-Path $InstallDir "venv"
-$CoreGit    = if ($env:CORE_GIT_URL)    { $env:CORE_GIT_URL }    else { "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.4" }
+$CoreGit    = if ($env:CORE_GIT_URL)    { $env:CORE_GIT_URL }    else { "git+https://github.com/fivepanelhat/Coastal-Alpine-Core.git@v0.5.9" }
 
 function Info($m) { Write-Host "[weaver] $m" -ForegroundColor Cyan }
 function Warn($m) { Write-Host "[weaver] $m" -ForegroundColor Yellow }
