@@ -135,8 +135,8 @@ class AgentOrchestrator:
                 self.effect_journal = EffectJournal(
                     audit_path=f"effects_{tenant_id}.jsonl"
                 )
-            except Exception as exc:
-                logger.debug("EffectJournal init failed: %s", exc)
+            except Exception as exp:
+                logger.debug("EffectJournal init failed: %s", exp)
                 self.effect_journal = None
 
         self.code_mode = None
@@ -163,7 +163,7 @@ class AgentOrchestrator:
                 self._code_mode_tools,
                 hitl=self._code_mode_hitl,
             )
-        except Exception as exc:
+        except Exception as exp:
             logger.debug("CodeModeRunner init failed: %s", exp)
             self.code_mode = None
 
