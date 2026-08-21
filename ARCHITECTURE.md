@@ -8,9 +8,11 @@ This document details the system design, relational schemas, and agent routing s
 
 Weaver is designed to provide secure, offline multi-tenant document retrieval and query routing. The entire engine runs locally at the edge (Taranaki HQ/remote job-sites) on Raspberry Pi or local server clusters, communicating with a local Ollama SLM.
 
-**Hybrid stack:** Weaver depends on **Coastal-Alpine-Core** (SecurityGuard, Telemetry, SovereignOllamaClient, flywheel hooks), pairs with **Aether** for sovereign development / HITL / computer use, and ships inside **coastal-alpine-stack**.
+**Hybrid stack:** Weaver depends on **Coastal-Alpine-Core** (SecurityGuard, Telemetry, SovereignOllamaClient, SessionEvent, provider registry, flywheel hooks), pairs with **Aether** for sovereign development / HITL / computer use, and ships inside **coastal-alpine-stack**.
 
 **Dual-platform hosts:** develop on **Windows 10/11** or **Linux**; deploy production workloads on **RPi 5 16GB + Hailo-10H** (or Linux edge servers). Installers: `install.sh`, `install.ps1`, `bootstrap.py`.
+
+**Core pin:** `coastal-alpine-core @ v0.5.8` — https://github.com/fivepanelhat/Coastal-Alpine-Core/releases/tag/v0.5.8
 
 ```mermaid
 %%{init: { "theme": "dark", "flowchart": { "curve": "basis", "useMaxWidth": true } }}%%
@@ -20,7 +22,7 @@ flowchart TB
     O --> F[Fulfilment]
     O --> R[Resolution]
     I & F & R --> KB[Tenant knowledge base]
-    KB --> C[Coastal-Alpine-Core guards + Ollama client]
+    KB --> C[Coastal-Alpine-Core guards + provider + SessionEvent]
     C --> LLM[Local Ollama]
     subgraph HOSTS[Hosts]
         W[Windows install.ps1]
@@ -55,6 +57,25 @@ flowchart TB
          │   (Isolated Vector Store)    │
          └──────────────────────────────┘
 ```
+
+---
+
+## Sprint A — Core seams (2026-08-21)
+
+| Phase | Capability | Core | Weaver adoption |
+|-------|------------|------|-----------------|
+| 1 | SessionEvent append-only audit stream | [v0.5.7](https://github.com/fivepanelhat/Coastal-Alpine-Core/releases/tag/v0.5.7) · [PR #27](https://github.com/fivepanelhat/Coastal-Alpine-Core/pull/27) | [PR #37](https://github.com/fivepanelhat/Weaver/pull/37) — emit on orchestrator path |
+| 2 | LLM provider Protocol + edge profiles | [v0.5.8](https://github.com/fivepanelhat/Coastal-Alpine-Core/releases/tag/v0.5.8) · [PR #28](https://github.com/fivepanelhat/Coastal-Alpine-Core/pull/28) | [PR #38](https://github.com/fivepanelhat/Weaver/pull/38) — `get_provider(profile=…)` |
+
+**LLM resolution order** (`weaver_graph/llm.py`):
+1. `coastal_alpine_core.get_provider(profile=…)` (Core ≥0.5.8)
+2. `SovereignOllamaClient` (legacy)
+3. stdlib Ollama HTTP `/api/generate`
+4. deterministic offline fallback
+
+**CAT constraints:** local-first JSONL / Ollama, no secrets in event payloads or profiles, HITL evidence path only (events do not control guardrails).
+
+Companion: Aether soft bridges — [PR #51](https://github.com/fivepanelhat/Aether/pull/51) (SessionEvent), [PR #52](https://github.com/fivepanelhat/Aether/pull/52) (provider profile).
 
 ---
 
