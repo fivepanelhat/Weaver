@@ -110,7 +110,7 @@ class AgentOrchestrator:
                     tenant_id=self.tenant_id,
                 )
             except Exception as exc:
-                logger.debug("LLM bind_session failed: %s", exp if False else exc)
+                logger.debug("LLM bind_session failed: %s", exc)
 
     def _record_trajectory(
         self,
