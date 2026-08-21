@@ -1,4 +1,8 @@
-"""Local LLM wrapper: prefers Coastal-Alpine-Core, then Ollama HTTP, then deterministic fallback."""
+"""Local LLM wrapper: prefers Core get_provider, then SovereignOllamaClient, then HTTP, then fallback.
+
+Sprint A Phase 2 — soft provider seam. No hard dependency on Core APIs beyond soft-import.
+CAT: local-first, http(s) only, deterministic offline fallback.
+"""
 
 from __future__ import annotations
 
@@ -38,18 +42,42 @@ class LocalSovereignLLM:
         model: str = DEFAULT_MODEL,
         base_url: str = DEFAULT_OLLAMA_URL,
         timeout: int = 60,
+        profile: str | None = None,
     ):
         self.model = model
         self.base_url = _validate_ollama_base_url(base_url)
         self.timeout = timeout
+        self.profile = profile or os.getenv("WEAVER_LLM_PROFILE", "edge-default")
         self._core_client = None
         self._init_core_client()
 
     def _init_core_client(self) -> None:
+        """Prefer Core provider registry (0.5.8+); fall back to SovereignOllamaClient."""
+        # 1) Sprint A Phase 2 seam: get_provider + profile
+        try:
+            from coastal_alpine_core import get_provider  # type: ignore
+
+            self._core_client = get_provider(
+                "ollama",
+                profile=self.profile,
+                host=self.base_url,
+                default_model=self.model,
+                timeout=float(self.timeout),
+            )
+            logger.debug("Using coastal_alpine_core.get_provider(profile=%s)", self.profile)
+            return
+        except Exception as e:
+            logger.debug("get_provider unavailable: %s", e)
+
+        # 2) Legacy Core client (pre-0.5.8)
         try:
             from coastal_alpine_core import SovereignOllamaClient  # type: ignore
 
-            self._core_client = SovereignOllamaClient(default_model=self.model)
+            self._core_client = SovereignOllamaClient(
+                host=self.base_url,
+                default_model=self.model,
+                timeout=float(self.timeout),
+            )
             logger.debug("Using coastal_alpine_core.SovereignOllamaClient")
         except Exception:
             self._core_client = None
@@ -58,13 +86,15 @@ class LocalSovereignLLM:
         """Invoke the local LLM. Falls back to a deterministic response when offline."""
         if self._core_client is not None:
             try:
-                # Core client APIs vary slightly across versions
                 if hasattr(self._core_client, "chat"):
                     return str(self._core_client.chat(prompt))
                 if hasattr(self._core_client, "invoke"):
                     return str(self._core_client.invoke(prompt))
                 if hasattr(self._core_client, "generate"):
-                    return str(self._core_client.generate(prompt))
+                    result = self._core_client.generate(prompt)
+                    if isinstance(result, dict):
+                        return str(result.get("response", result))
+                    return str(result)
             except Exception as e:
                 logger.warning("Core Ollama client failed: %s", e)
 

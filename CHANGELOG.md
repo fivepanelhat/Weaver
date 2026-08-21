@@ -10,10 +10,15 @@
 
 All notable changes to the `weaver` repository will be documented in this file.
 
+## [Unreleased] — Sprint A Phase 2 (2026-08-21)
+
+### Changed
+- **Provider seam**: `LocalSovereignLLM` prefers Core `get_provider(profile=...)` (Core ≥0.5.8), then legacy `SovereignOllamaClient`, then stdlib Ollama HTTP, then deterministic fallback. Optional `profile` / `WEAVER_LLM_PROFILE` (default `edge-default`). CAT local-first; soft-import only.
+
 ## [Unreleased] — Sprint A Phase 1 (2026-08-21)
 
 ### Added
-- **SessionEvent instrumentation** on `AgentOrchestrator`: emits Core `SessionEventStore` events (`prompt_received`, `security_check`, `blocked`, `agent_step`, `escalation`, `session_end`, `error`) with `session_id` + `tenant_id`. Optional `event_store` inject for tests. Dependency pin to Core `feat/sprint-a-session-events` (→ `v0.5.7` after Core PR merge).
+- **SessionEvent instrumentation** on `AgentOrchestrator`: emits Core `SessionEventStore` events (`prompt_received`, `security_check`, `blocked`, `agent_step`, `escalation`, `session_end`, `error`) with `session_id` + `tenant_id`. Optional `event_store` inject for tests. Dependency pin to Core `main` / `v0.5.7+`.
 
 ## [0.1.0] - 2026-07-13 — First public release
 
