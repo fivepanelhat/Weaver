@@ -136,7 +136,7 @@ class AgentOrchestrator:
                     audit_path=f"effects_{tenant_id}.jsonl"
                 )
             except Exception as exc:
-                logger.debug("EffectJournal init failed: %s", exp if False else exc)
+                logger.debug("EffectJournal init failed: %s", exc)
                 self.effect_journal = None
 
         self.code_mode = None
@@ -164,7 +164,7 @@ class AgentOrchestrator:
                 hitl=self._code_mode_hitl,
             )
         except Exception as exc:
-            logger.debug("CodeModeRunner init failed: %s", exp if False else exc)
+            logger.debug("CodeModeRunner init failed: %s", exp)
             self.code_mode = None
 
     def register_code_tool(self, name: str, fn: Callable[..., Any]) -> None:
@@ -192,12 +192,12 @@ class AgentOrchestrator:
                         reversible=False,
                         metadata={"tenant_id": self.tenant_id},
                     )
-                except Exception as exc:
-                    logger.debug("effect record failed: %s", exc)
+                except Exception as exp:
+                    logger.debug("effect record failed: %s", exp)
             return out
-        except Exception as exc:
-            logger.debug("run_code_mode failed: %s", exp if False else exc)
-            return {"success": False, "error": str(exc)[:200]}
+        except Exception as exp:
+            logger.debug("run_code_mode failed: %s", exp)
+            return {"success": False, "error": str(exp)[:200]}
 
     def record_effect(
         self,
@@ -219,8 +219,8 @@ class AgentOrchestrator:
                 reversible=reversible,
                 metadata={"tenant_id": self.tenant_id},
             )
-        except Exception as exc:
-            logger.debug("record_effect failed: %s", exc)
+        except Exception as exp:
+            logger.debug("record_effect failed: %s", exp)
             return None
 
     def undo_last_effect(self) -> Optional[Any]:
@@ -228,8 +228,8 @@ class AgentOrchestrator:
             return None
         try:
             return self.effect_journal.undo_last()
-        except Exception as exc:
-            logger.debug("undo_last_effect failed: %s", exc)
+        except Exception as exp:
+            logger.debug("undo_last_effect failed: %s", exp)
             return None
 
     def resolved_config(self) -> Dict[str, Any]:
@@ -266,8 +266,8 @@ class AgentOrchestrator:
             self.config_overlay.set_session(
                 {"session_id": session_id, "use_graph": self.use_graph}
             )
-        except Exception as exc:
-            logger.debug("session overlay failed: %s", exp if False else exp)
+        except Exception as exp:
+            logger.debug("session overlay failed: %s", exp)
 
     def _bind_llm_session(self, session_id: str) -> None:
         llm = self.llm
