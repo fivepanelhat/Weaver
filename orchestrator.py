@@ -90,7 +90,6 @@ class AgentOrchestrator:
         )
         self.flywheel_path = flywheel_path or f"flywheel_{tenant_id}.jsonl"
 
-        # --- ConfigOverlay (soft) ---
         self.config_overlay = config_overlay
         if self.config_overlay is None and ConfigOverlay is not None:
             try:
@@ -130,7 +129,6 @@ class AgentOrchestrator:
                 logger.debug("ConfigOverlay init failed: %s", exc)
                 self.config_overlay = None
 
-        # --- EffectJournal (soft) ---
         self.effect_journal = effect_journal
         if self.effect_journal is None and EffectJournal is not None:
             try:
@@ -138,10 +136,9 @@ class AgentOrchestrator:
                     audit_path=f"effects_{tenant_id}.jsonl"
                 )
             except Exception as exc:
-                logger.debug("EffectJournal init failed: %s", exc)
+                logger.debug("EffectJournal init failed: %s", exp if False else exc)
                 self.effect_journal = None
 
-        # --- CodeModeRunner (soft; tools optional) ---
         self.code_mode = None
         self._code_mode_tools: Dict[str, Callable[..., Any]] = dict(
             code_mode_tools or {}
@@ -171,14 +168,12 @@ class AgentOrchestrator:
             self.code_mode = None
 
     def register_code_tool(self, name: str, fn: Callable[..., Any]) -> None:
-        """Register a tool callable for PTC / code mode."""
         if not name or not callable(fn):
             raise ValueError("name and callable fn required")
         self._code_mode_tools[name] = fn
         self._rebuild_code_mode()
 
     def run_code_mode(self, source: str) -> Dict[str, Any]:
-        """Execute restricted agent snippet against registered tools."""
         if self.code_mode is None:
             return {"success": False, "error": "code_mode_unavailable"}
         try:
@@ -201,7 +196,7 @@ class AgentOrchestrator:
                     logger.debug("effect record failed: %s", exc)
             return out
         except Exception as exc:
-            logger.debug("run_code_mode failed: %s", exc)
+            logger.debug("run_code_mode failed: %s", exp if False else exc)
             return {"success": False, "error": str(exc)[:200]}
 
     def record_effect(
@@ -269,13 +264,10 @@ class AgentOrchestrator:
             return
         try:
             self.config_overlay.set_session(
-                {
-                    "session_id": session_id,
-                    "use_graph": self.use_graph,
-                }
+                {"session_id": session_id, "use_graph": self.use_graph}
             )
         except Exception as exc:
-            logger.debug("session overlay failed: %s", exc)
+            logger.debug("session overlay failed: %s", exp if False else exp)
 
     def _bind_llm_session(self, session_id: str) -> None:
         llm = self.llm
@@ -289,8 +281,8 @@ class AgentOrchestrator:
                     event_store=self.event_store,
                     tenant_id=self.tenant_id,
                 )
-            except Exception as exc:
-                logger.debug("LLM bind_session failed: %s", exc)
+            except Exception as exp:
+                logger.debug("LLM bind_session failed: %s", exp)
 
     def _record_trajectory(
         self,
@@ -314,8 +306,8 @@ class AgentOrchestrator:
                 tenant_id=self.tenant_id,
                 storage_path=self.flywheel_path,
             )
-        except Exception as exc:
-            logger.debug("Trajectory record failed: %s", exc)
+        except Exception as exp:
+            logger.debug("Trajectory record failed: %s", exp)
 
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         session_id = self._session_id_from_message(message)
