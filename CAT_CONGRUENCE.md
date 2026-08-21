@@ -1,7 +1,6 @@
 # Coastal Alpine Tech - portfolio congruence
 
 **Company:** Coastal Alpine Tech Limited | **Stage:** Pre-seed | **Region:** Taranaki, Aotearoa New Zealand  
-**R&D since:** 8 August 2025 | **Founding target:** 8 August 2026  
 **Org home:** [fivepanelhat](https://github.com/fivepanelhat/fivepanelhat) | **Founder OS:** [NZ-Start-Up](https://github.com/fivepanelhat/NZ-Start-Up)
 
 This repository is part of the **Kiwi Edge AI Stack** - hybrid edge (RPi 5 16GB + Hailo-10H) + multi-model fleets + Te Mana Raraunga local-first data. It is **not** a claim of large-scale commercial deployment or raised Series capital.
@@ -19,11 +18,12 @@ This repository is part of the **Kiwi Edge AI Stack** - hybrid edge (RPi 5 16GB 
 | Narrative | fivepanelhat |
 | Founder OS / EDA | NZ-Start-Up |
 | Agent / HITL | Aether |
+| Agent runtime | cat-agent-harness |
 | Edge orchestration | Weaver |
 | Shared SDK | Coastal-Alpine-Core, coastal-alpine-stack |
 | Field | Sovereign-Edge-Firmware |
-| Domains | **Byte Size Kai** (Blue-Moon-Portal), SoilGuard-Portal, AquaGuard-Portal, Sting-Operation-AI |
-| Whanau / social | whanau-preterm-support-hub, Front_Line_Whanau |
+| Domains | **Byte Size Kai** (Byte-Size-Kai), SoilGuard-Portal, AquaGuard-Portal, Sting-Operation-AI |
+| Whanau / social | Front_Line_Whanau |
 | Privacy util | CAT-mail |
 
 ## Autonomy ceiling (all agentic work)
