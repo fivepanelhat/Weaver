@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Mapping, Optional
 
 from agents import IntakeAgent
 from coastal_alpine_core.security import SecurityGuard
@@ -21,6 +21,12 @@ try:
     from coastal_alpine_core import ConfigOverlay  # Core ≥0.5.10
 except ImportError:  # pragma: no cover
     ConfigOverlay = None  # type: ignore
+
+try:
+    from coastal_alpine_core import EffectJournal, CodeModeRunner  # Core ≥0.5.10
+except ImportError:  # pragma: no cover
+    EffectJournal = None  # type: ignore
+    CodeModeRunner = None  # type: ignore
 
 logger = logging.getLogger("weaver.orchestrator")
 
@@ -50,12 +56,9 @@ class AgentOrchestrator:
     """
     Production entrypoint for multi-tenant helpdesk messages.
 
-    Wraps IntakeAgent with security + telemetry. Optionally exposes the
-    weaver_graph helpdesk state machine for graph-based routing.
-    Emits SessionEvents (Core 0.5.7+) for HITL audit and Trajectories
-    (Core 0.5.9+) for DataFlywheel outcome samples. Optional llm_call
-    events when the LLM client supports bind_session.
-    Optional ConfigOverlay (Core 0.5.10+) for tenant/session stacked config.
+    Soft Core seams:
+    - SessionEvents (0.5.7+) / Trajectories (0.5.9+)
+    - ConfigOverlay, EffectJournal, CodeModeRunner (0.5.10+)
     """
 
     def __init__(
@@ -70,6 +73,9 @@ class AgentOrchestrator:
         flywheel_path: Optional[str] = None,
         config_overlay: Any = None,
         llm_profile: str = "edge-default",
+        effect_journal: Any = None,
+        code_mode_tools: Optional[Mapping[str, Callable[..., Any]]] = None,
+        code_mode_hitl: Optional[Callable[[str], bool]] = None,
     ):
         self.tenant_id = tenant_id
         self.tenant_config = tenant_config or {}
@@ -83,6 +89,8 @@ class AgentOrchestrator:
             storage_path=f"session_events_{tenant_id}.jsonl"
         )
         self.flywheel_path = flywheel_path or f"flywheel_{tenant_id}.jsonl"
+
+        # --- ConfigOverlay (soft) ---
         self.config_overlay = config_overlay
         if self.config_overlay is None and ConfigOverlay is not None:
             try:
@@ -100,9 +108,10 @@ class AgentOrchestrator:
                     "edge-fast", {"llm": {"profile": "edge-fast"}}
                 )
                 self.config_overlay.use_profile(
-                    llm_profile if llm_profile in ("edge-default", "edge-fast") else "edge-default"
+                    llm_profile
+                    if llm_profile in ("edge-default", "edge-fast")
+                    else "edge-default"
                 )
-                # Tenant overlay: only non-secret structural keys
                 safe_tenant = {
                     k: v
                     for k, v in self.tenant_config.items()
@@ -121,6 +130,25 @@ class AgentOrchestrator:
                 logger.debug("ConfigOverlay init failed: %s", exc)
                 self.config_overlay = None
 
+        # --- EffectJournal (soft) ---
+        self.effect_journal = effect_journal
+        if self.effect_journal is None and EffectJournal is not None:
+            try:
+                self.effect_journal = EffectJournal(
+                    audit_path=f"effects_{tenant_id}.jsonl"
+                )
+            except Exception as exc:
+                logger.debug("EffectJournal init failed: %s", exc)
+                self.effect_journal = None
+
+        # --- CodeModeRunner (soft; tools optional) ---
+        self.code_mode = None
+        self._code_mode_tools: Dict[str, Callable[..., Any]] = dict(
+            code_mode_tools or {}
+        )
+        self._code_mode_hitl = code_mode_hitl
+        self._rebuild_code_mode()
+
         self.intake_agent = IntakeAgent(
             self.knowledge_base_client,
             self.memory_store,
@@ -128,6 +156,86 @@ class AgentOrchestrator:
             tenant_config=self.tenant_config,
         )
         self._graph = None
+
+    def _rebuild_code_mode(self) -> None:
+        if CodeModeRunner is None:
+            self.code_mode = None
+            return
+        try:
+            self.code_mode = CodeModeRunner(
+                self._code_mode_tools,
+                hitl=self._code_mode_hitl,
+            )
+        except Exception as exc:
+            logger.debug("CodeModeRunner init failed: %s", exp if False else exc)
+            self.code_mode = None
+
+    def register_code_tool(self, name: str, fn: Callable[..., Any]) -> None:
+        """Register a tool callable for PTC / code mode."""
+        if not name or not callable(fn):
+            raise ValueError("name and callable fn required")
+        self._code_mode_tools[name] = fn
+        self._rebuild_code_mode()
+
+    def run_code_mode(self, source: str) -> Dict[str, Any]:
+        """Execute restricted agent snippet against registered tools."""
+        if self.code_mode is None:
+            return {"success": False, "error": "code_mode_unavailable"}
+        try:
+            result = self.code_mode.run(source)
+            out = {
+                "success": bool(result.success),
+                "output": result.output,
+                "error": result.error,
+                "tool_calls": list(result.tool_calls or []),
+            }
+            if self.effect_journal is not None and result.success:
+                try:
+                    self.effect_journal.record(
+                        "code_mode.run",
+                        payload={"tool_calls": out["tool_calls"]},
+                        reversible=False,
+                        metadata={"tenant_id": self.tenant_id},
+                    )
+                except Exception as exc:
+                    logger.debug("effect record failed: %s", exc)
+            return out
+        except Exception as exc:
+            logger.debug("run_code_mode failed: %s", exc)
+            return {"success": False, "error": str(exc)[:200]}
+
+    def record_effect(
+        self,
+        action: str,
+        *,
+        payload: Optional[Dict[str, Any]] = None,
+        reverse_action: Optional[str] = None,
+        reverse_payload: Optional[Dict[str, Any]] = None,
+        reversible: Optional[bool] = None,
+    ) -> Optional[Any]:
+        if self.effect_journal is None:
+            return None
+        try:
+            return self.effect_journal.record(
+                action,
+                payload=payload,
+                reverse_action=reverse_action,
+                reverse_payload=reverse_payload,
+                reversible=reversible,
+                metadata={"tenant_id": self.tenant_id},
+            )
+        except Exception as exc:
+            logger.debug("record_effect failed: %s", exc)
+            return None
+
+    def undo_last_effect(self) -> Optional[Any]:
+        if self.effect_journal is None:
+            return None
+        try:
+            return self.effect_journal.undo_last()
+        except Exception as exc:
+            logger.debug("undo_last_effect failed: %s", exc)
+            return None
 
     def resolved_config(self) -> Dict[str, Any]:
         if self.config_overlay is None:
@@ -273,9 +381,7 @@ class AgentOrchestrator:
                 result = self.intake_agent.process_interaction(message)
             if isinstance(result, dict):
                 result = {**result, "session_id": session_id}
-            status = (
-                result.get("status") if isinstance(result, dict) else "ok"
-            )
+            status = result.get("status") if isinstance(result, dict) else "ok"
             self.event_store.emit(
                 session_id=session_id,
                 event_type="session_end",
