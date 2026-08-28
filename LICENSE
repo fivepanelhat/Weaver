@@ -1,27 +1,41 @@
-Copyright (c) 2026 Coastal Alpine Tech Limited. All rights reserved.
+Copyright (c) 2025-2026 Coastal Alpine Tech Limited. All rights reserved.
 
-PROPRIETARY AND CONFIDENTIAL
+PROPRIETARY NOTICE
 
-This software, together with all associated source code, documentation,
-designs, and related materials (the "Software"), is the proprietary and
-confidential property of Coastal Alpine Tech Limited (New Zealand) and is
-protected by the Copyright Act 1994 (NZ) and applicable international
-copyright and intellectual property law.
+Coastal Alpine Tech Limited is a registered New Zealand company
+(Companies Office number 9451195; incorporated 28 August 2026).
 
-No licence, right, or permission is granted, whether express or implied, to
-any person to use, copy, reproduce, modify, adapt, publish, distribute,
-sublicense, sell, or create derivative works from the Software, in whole or
-in part, without the prior written consent of Coastal Alpine Tech Limited.
+This repository, and all Coastal Alpine Tech-specific source code,
+documentation, designs, models, prompts, skills, schemas, diagrams,
+firmware, configuration, branding, and related materials in it
+(together, the "Works"), are the exclusive property of
+Coastal Alpine Tech Limited.
 
-Unauthorised use, reproduction, or distribution of the Software, or any
-portion of it, may result in civil and criminal liability.
+The Works are protected by applicable copyright and other intellectual
+property laws in New Zealand and in any other jurisdiction where
+protection is available. Publication on a public repository does not
+grant a licence.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
-COASTAL ALPINE TECH LIMITED BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR ITS
-USE.
+No right or permission is granted — express, implied, or by estoppel —
+to use, copy, reproduce, modify, adapt, publish, distribute, display,
+perform, sublicense, sell, commercially exploit, or create derivative
+works from the Works, in whole or in part, except:
+
+  (a) viewing the public files as published; and
+  (b) any use that Coastal Alpine Tech Limited has authorised in writing.
+
+Third-party components remain the property of their respective owners
+and are used under their own licences. Those licences are not expanded
+or restricted by this notice.
+
+Unauthorised use may give rise to civil and, where applicable, criminal
+consequences under the laws of the relevant jurisdiction.
+
+THE WORKS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+AND NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW,
+COASTAL ALPINE TECH LIMITED IS NOT LIABLE FOR ANY CLAIM, LOSS, OR
+DAMAGE ARISING FROM THE WORKS OR THEIR USE.
 
 Coastal Alpine Tech Limited
-New Plymouth, Taranaki, New Zealand
+Taranaki, New Zealand
